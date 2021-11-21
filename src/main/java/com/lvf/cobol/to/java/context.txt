@@ -1,0 +1,703 @@
+000100*＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+000200*              程  式  異  動  刪  改  備  註
+000300*              ------------------------------
+000400* 異動日期  異動者      程式異動原因描述
+000500*---------- ------ ----------------------------------------------
+000600*2003/05/19  GYM   新增程式﹐ADT,ACT共同使用.
+000700*2003/07/10  GYM  廠別須合計﹐選公司別為PY時需輸入公司類別.
+000800*2003/08/08  GYM  體現部門別﹐加入選項 跳頁方式1-按廠別2-按部門.
+000900*                 不包含廠間交易資料及收貨類付款憑單資料.(會計部)
+001000*2003/08/11  GYM  簽收檔沒資料的不要列印出來.---張瑞英
+001100*2003/10/12  GYM  截止進貨日期為20030930時歸屬年月為200310沒資料.
+001200*2003/12/02 DHY 增加新公司G31.
+001300*2004/06/28 WMB 增加部門17-財管
+001400*＝＝/ ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+001500$CONTROL NOSOURCE,USLINIT,OPTIMIZE,ERRORS=15
+001600$CONTROL POST85
+001700$INCLUDE MACRO
+001800$INCLUDE MACRO1
+001900$INCLUDE MACROFOX
+002000%IDDIV(SBEXPD18#,GYM#,03/05/19#,未送會計部明細表#).
+002100%ENVDIV.
+002200 INPUT-OUTPUT SECTION.
+002300 FILE-CONTROL.
+002400    %SEQPASS.
+002500    SELECT LIST-F1 ASSIGN TO "PBEXPD18,UR,A,LP(CCTL)".
+002600    SELECT KSAM-F1 ASSIGN TO "KBEXPD18,DA"
+002700                   ORGANIZATION IS INDEXED
+002800                   ACCESS MODE  IS DYNAMIC
+002900                   RECORD KEY   IS K1-KEY
+003000                   FILE STATUS  IS KSSTATUS.
+003100
+003200*****************************************************************
+003300 DATA DIVISION.
+003400 FILE SECTION.
+003500 %PASSFD.
+003600 FD KSAM-F1.
+003700 01 KSAM-R1.
+003800    05 K1-KEY.
+003900       10 K1-DEPT              PIC X(02).
+004000       10 K1-FACT-NO           PIC X(03).
+004100       10 K1-CUST-NO           PIC X(10).
+004200       10 K1-EXPD-NO           PIC X(18).
+004300    05 K1-ACCT-NO              PIC X(08).
+004400    05 K1-EXPDA                PIC S9(08)V99.
+004500    05 K1-DOLLAR-ID            PIC 9(01).
+004600    05 K1-DES2                 PIC X(60).
+004700    05 K1-MARK                 PIC 9(01).
+004800    05 K1-PAY-MARK             PIC X(02).
+004900    05 K1-TRF-DAY              PIC 9(08).
+005000    05 K1-SIGN-DAY             PIC 9(08).
+005100    05 K1-ACCP-MARK            PIC X(01).
+005200    05 K1-FACT-NAME            PIC X(26).
+005300    05 K1-CUST-NAME            PIC X(60).
+005400
+005500 FD  LIST-F1.
+005600 01  LIST-R1                   PIC X(145).
+005700****************************************************************
+005800 WORKING-STORAGE SECTION.
+005900 01 REPORT-AREA.
+006000    05 REPORT-START.
+006100        10                    PIC X(01) VALUE %33.
+006200        10                    PIC X(01) VALUE %17.
+006300    05 REPORT-END.
+006400        10                    PIC X(01) VALUE %22.
+006500    05 HEAD-1.
+006600       10                      PIC X(10) VALUE "<PBEXPD18>".
+006700       10                      PIC X(40) VALUE SPACES.
+006800       10                      PIC X(30) VALUE
+006900                     "憑 單 未 送 會 計 部 明 細 表".
+007000       10                      PIC X(40) VALUE SPACES.
+007100       10                      PIC X(13) VALUE
+007200                      "截止進貨日期:".
+007300       10 H-BILL-DATE          PIC 9999/99/99.
+007400    05 HEAD-2.
+007500       10                      PIC X(120) VALUE SPACES.
+007600       10                      PIC X(13) VALUE
+007700                        "制 表  日 期:".
+007800       10 H-PRINT-DATE         PIC 9999/99/99.
+007900    05 HEAD-3.
+008000       10 H-HEAD-DEPT          PIC X(36).
+008100*      10                      PIC X(06) VALUE "廠別:(".
+008200*      10 H-FACT-NO            PIC X(03).
+008300*      10                      PIC X(01) VALUE ")".
+008400*      10 H-FACT-NAME          PIC X(26).
+008500       10                      PIC X(25) VALUE SPACE.
+008600       10                      PIC X(09) VALUE "付款地點:".
+008700       10 H-PAY-MARK           PIC X(04).
+008800       10                      PIC X(46) VALUE SPACE.
+008900       10                      PIC X(13) VALUE "頁        次:".
+009000       10                      PIC X(02) VALUE SPACE.
+009100       10 H-PAGE               PIC ZZ9.
+009200    05 HEAD-4.
+009300       10                      PIC X(145) VALUE ALL "=".
+009400    05 HEAD-5.
+009500       10                      PIC X(10) VALUE "統一編號".
+009600       10                      PIC X(01) VALUE SPACE.
+009700       10                      PIC X(18) VALUE "憑單編號".
+009800       10                      PIC X(01) VALUE SPACE.
+009900       10                      PIC X(08) VALUE "會計科目".
+010000       10                      PIC X(13) VALUE "      金額".
+010100       10                      PIC X(01) VALUE SPACE.
+010200       10                      PIC X(04) VALUE "幣別".
+010300       10                      PIC X(01) VALUE SPACE.
+010400       10                      PIC X(53) VALUE "摘要說明".
+010500       10                      PIC X(01) VALUE SPACE.
+010600       10                      PIC X(08) VALUE "憑單注記".
+010700       10                      PIC X(01) VALUE SPACE.
+010800       10                      PIC X(08) VALUE "轉檔日期".
+010900       10                      PIC X(01) VALUE SPACE.
+011000       10                      PIC X(08) VALUE "審核日期".
+011100       10                      PIC X(08) VALUE "是否退件".
+011200    05 HEAD-6.
+011300       10                      PIC X(60) VALUE
+011400                                 "供應商名稱.................".
+011500    05 HEAD-7.
+011600       10                      PIC X(145) VALUE ALL "-".
+011700    05 DETAIL-1.
+011800       10 D-CUST-NO            PIC X(10).
+011900       10                      PIC X(01) VALUE SPACE.
+012000       10 D-EXPD-NO            PIC X(18).
+012100       10                      PIC X(01) VALUE SPACE.
+012200       10 D-ACCT-NO            PIC X(08).
+012300       10 D-EXPDA              PIC ZZ,ZZZ,ZZ9.99.
+012400       10                      PIC X(01) VALUE SPACE.
+012500       10 D-DOLLAR-ID          PIC X(04).
+012600       10                      PIC X(01) VALUE SPACE.
+012700       10 D-DES2               PIC X(60).
+012800       10                      PIC X(01) VALUE SPACE.
+012900       10 D-MARK               PIC 9(01).
+013000       10                      PIC X(01) VALUE SPACE.
+013100       10 D-TRF-DAY            PIC 9(08).
+013200       10                      PIC X(01) VALUE SPACE.
+013300       10 D-SIGN-DAY           PIC 9(08).
+013400       10                      PIC X(02) VALUE SPACE.
+013500       10 D-ACCP-MARK          PIC X(01).
+013600    05 DETAIL-2.
+013700       10 D-CUST-NAME          PIC X(60).
+013800    05 TOT-FACT.                                                  10 JUL03
+013900       10 T-FACT-NO           PIC X(05) VALUE SPACE.              10 JUL03
+014000       10                     PIC X(14) VALUE "金額小計:".        10 JUL03
+014100       10                     PIC X(04) VALUE "RMB:".             10 JUL03
+014200       10 T-FACT-EXPDA-RMB    PIC ZZZ,ZZZ,ZZZ,ZZ9.99.             10 JUL03
+014300       10                     PIC X(07) VALUE "   NTD:".          10 JUL03
+014400       10 T-FACT-EXPDA-NTD    PIC ZZZ,ZZZ,ZZZ,ZZ9.99.             10 JUL03
+014500       10                     PIC X(07) VALUE "   HKD:".          10 JUL03
+014600       10 T-FACT-EXPDA-HKD    PIC ZZZ,ZZZ,ZZZ,ZZ9.99.             10 JUL03
+014700       10                     PIC X(07) VALUE "   USD:".          10 JUL03
+014800       10 T-FACT-EXPDA-USD    PIC ZZZ,ZZZ,ZZZ,ZZ9.99.             10 JUL03
+014900    05 TOT-1.
+015000       10                     PIC X(05) VALUE SPACE.
+015100       10                     PIC X(14) VALUE "金額合計:".
+015200       10                     PIC X(04) VALUE "RMB:".
+015300       10 T-TOT-EXPDA-RMB     PIC ZZZ,ZZZ,ZZZ,ZZ9.99.
+015400       10                     PIC X(07) VALUE "   NTD:".
+015500       10 T-TOT-EXPDA-NTD     PIC ZZZ,ZZZ,ZZZ,ZZ9.99.
+015600       10                     PIC X(07) VALUE "   HKD:".
+015700       10 T-TOT-EXPDA-HKD     PIC ZZZ,ZZZ,ZZZ,ZZ9.99.
+015800       10                     PIC X(07) VALUE "   USD:".
+015900       10 T-TOT-EXPDA-USD     PIC ZZZ,ZZZ,ZZZ,ZZ9.99.
+016000    05 END-1.
+016100       10                     PIC X(68) VALUE ALL "-".
+016200       10                     PIC X(08) VALUE "下頁繼續".
+016300       10                     PIC X(66) VALUE ALL "-".
+016400    05 END-3.
+016500       10                     PIC X(05) VALUE SPACES.
+016600       10                     PIC X(05) VALUE "審核:".
+016700       10                     PIC X(35) VALUE SPACES.
+016800       10                     PIC X(07) VALUE "制表:".
+016900       10 E-PRINT-NAME        PIC X(08).
+017000       10                     PIC X(35) VALUE SPACES.
+017100       10                     PIC X(05) VALUE "簽收:".
+017200
+017300 01 WORK-AREA.
+017400    05 B-CO-NO                 PIC 9(01).
+017500    05 B-CO-NO-KIND            PIC X(04).                         10 JUL03
+017600    05 B-FACT-NO               PIC X(03).
+017700    05 B-DEPT                  PIC X(02).
+017800    05 B-SURE                  PIC X.
+017900    05 B-KIND                  PIC X.
+018000    05 B-PAY-MARK              PIC X(02).
+018100    05 B-MARK                  PIC X(01).
+018200    05 B-DOLLAR-ID             PIC 9(01).
+018300    05 B-YYMMDD                PIC 9(08).
+018400    05 B-YYMMDD-R REDEFINES B-YYMMDD.
+018500       10 B-YY                 PIC 9(04).
+018600       10 B-MM                 PIC 9(02).
+018700       10 B-DD                 PIC 9(02).
+018800    05 B-PRINT-KIND            PIC X(01).                         08 AUG03
+018900    05 WK-YYMMDD-L             PIC 9(08).
+019000    05 WK-YYMMDD-L-R REDEFINES WK-YYMMDD-L.
+019100       10 WK-YYMMDD-L-R-1      PIC 9(06).
+019200       10 WK-DD-L-R            PIC 9(02).
+019300    05 WK-CUR-DATE.
+019400       10 WK-DATE              PIC 9(08).
+019500       10 WK-TIME              PIC 9(06).
+019600    05 WK-PAGE                 PIC 9(03).
+019700    05 WK-EXPD-EOC             PIC X(01).
+019800    05 WK-SIGNEXPD-EOC         PIC X(01).
+019900    05 WK-YYMM                 PIC 9(06).
+020000    05 WK-YYMM-RR REDEFINES WK-YYMM.
+020100       10 WK-YY-RR             PIC 9(04).
+020200       10 WK-MM-RR             PIC 9(02).
+020300    05 WK-YYMM-L               PIC 9(06).
+020400    05 WK-YYMM-L-R REDEFINES WK-YYMM-L.
+020500       10 WK-YY-L              PIC 9(04).
+020600       10 WK-MM-L              PIC 9(02).
+020700    05 WK-YYMM-R               PIC 9(06).
+020800    05 WK-YYMM-R-R REDEFINES WK-YYMM-R.
+020900       10 WK-YY-R              PIC 9(04).
+021000       10 WK-MM-R              PIC 9(02).
+021100    05 WK-FACT-NO              PIC X(03).
+021200    05 WK-FACT-NAME            PIC X(26).
+021300    05 WK-CUST-NO              PIC X(10).
+021400    05 WK-CUST-NAME            PIC X(60).
+021500    05 WK-PAY-MARK             PIC X(02).
+021600    05 WK-LINE                 PIC 9(02).
+021700    05 WK-END                  PIC X(01).
+021800    05 WK-FACT-EXPDA-RMB       PIC S9(12)V99.                     10 JUL03
+021900    05 WK-FACT-EXPDA-NTD       PIC S9(12)V99.                     10 JUL03
+022000    05 WK-FACT-EXPDA-HKD       PIC S9(12)V99.                     10 JUL03
+022100    05 WK-FACT-EXPDA-USD       PIC S9(12)V99.                     10 JUL03
+022200    05 WK-TOT-EXPDA-RMB        PIC S9(12)V99.
+022300    05 WK-TOT-EXPDA-NTD        PIC S9(12)V99.
+022400    05 WK-TOT-EXPDA-HKD        PIC S9(12)V99.
+022500    05 WK-TOT-EXPDA-USD        PIC S9(12)V99.
+022600    05 WK-TRF-DAY              PIC 9(08).
+022700    05 WK-SIGN-DAY             PIC 9(08).
+022800    05 WK-ACCP-OK              PIC X(01).
+022900    05 WK-DEPT                 PIC X(02).                         08 AUG03
+023000    05 WK-RELFACTD-EOC         PIC X(01).                         08 AUG03
+023100    05 WK-RELFACT-MARK         PIC X(01).                         08 AUG03
+023200    05 WK-EXIST-SIGNEXPD       PIC X(01).                         11 AUG03
+023300
+023400 01 RELFACTD-BUFF.  COPY RELFACTD OF EXPMLIB.
+023500 01 COMPANYM-BUFF.  COPY COMPANYM OF INCLIB.
+023600 01 FACTM-BUFF.     COPY FACTM    OF INCLIB.
+023700 01 CUSM-BUFF.      COPY CUSM     OF EXPMLIB.
+023800 01 EXPD-BUFF.      COPY EXPD     OF EXPMLIB.
+023900 01 SIGNEXPD-BUFF.  COPY SIGNEXPD OF EXPMLIB.
+024000 01 MAIN-COM.       COPY MAIN-COM OF PCCLIB.
+024100*****************************************************************
+024200 PROCEDURE DIVISION.
+024300*****************************************************************
+024400 %DEBU.
+024500 000-BEGIN-RTN.
+024600    INITIALIZE WORK-AREA.
+024700    MOVE FUNCTION CURRENT-DATE TO WK-CUR-DATE
+024800    %READPASS
+024900    PERFORM 000-ACCEPT-RTN
+025000    IF B-SURE = "Y"
+025100       PERFORM 000-OPEN-FILE
+025200       PERFORM 100-MAIN-RTN
+025300       PERFORM 000-CLOSE-FILE
+025400    END-IF
+025500    %STOPRUN.
+025600
+025700 000-ACCEPT-RTN.
+025800    DISPLAY SPACE.
+025900    DISPLAY "**********************************************"
+026000    DISPLAY "***       憑單未送會計部明細表             ***"
+026100    DISPLAY "***       程式代號:  PBEXPD18              ***"
+026200    DISPLAY "**********************************************"
+026300    DISPLAY SPACE.
+026400    DISPLAY "請選擇公司別(1-YY,2-PY,3-KY,4-P55,5-G31 ):"
+026500         WITH NO ADVANCING
+026600    ACCEPT B-CO-NO FREE
+026700    IF B-CO-NO <> 1 AND <> 2 AND <> 3 AND <> 4 AND <> 5
+026800        DISPLAY "公司別錯誤!!!"
+026900        %STOPRUN
+027000    END-IF
+027100    IF B-CO-NO = 2
+027200      DISPLAY "請輸入公司類別(PYM,TEC,..):" WITH NO ADVANCING
+027300      ACCEPT B-CO-NO-KIND FREE
+027400      IF B-CO-NO-KIND = SPACE
+027500         DISPLAY "請輸入公司類別!!"
+027600         %STOPRUN
+027700      END-IF
+027800    END-IF
+027900    DISPLAY "請輸入廠別(空白表全部):" WITH NO ADVANCING
+028000    ACCEPT B-FACT-NO FREE
+028100    DISPLAY "請輸入截止進貨日期(YYYYMMDD):" WITH NO ADVANCING
+028200    ACCEPT B-YYMMDD FREE
+028300    IF B-MM > 12 OR B-MM < 1 OR B-DD > 31 OR B-DD < 1
+028400       OR B-YY < 1900
+028500       DISPLAY "日期錯誤!!"
+028600       %STOPRUN
+028700    END-IF
+028800    DISPLAY "請輸入付款地點(1-國內,2-香港):"
+028900                       WITH NO ADVANCING
+029000    ACCEPT B-PAY-MARK FREE
+029100    IF B-PAY-MARK <> "1" AND "2"
+029200        DISPLAY "付款地點選擇錯誤!!"
+029300        %STOPRUN
+029400    END-IF
+029500    DISPLAY "請選擇憑單狀態(1-行政部門未審,2-已審﹐空白-全部):"
+029600                       WITH NO ADVANCING
+029700    ACCEPT B-MARK FREE
+029800    IF B-MARK <> "1" AND "2" AND SPACE
+029900        DISPLAY "憑單狀態選擇錯誤!!"
+030000        %STOPRUN
+030100    END-IF
+030200    DISPLAY "請輸入訂購類別(1-資材,2-總務,3-外包,4-加工,"
+030300               "<8> 總務除外 <X>全部:" WITH NO ADVANCING
+030400    ACCEPT B-KIND FREE
+030500   IF B-KIND <> "1" AND "2" AND "3" AND "4" AND "8" AND "X"
+030600       DISPLAY "類別輸入錯誤!!!"
+030700       %STOPRUN
+030800    END-IF
+030900    DISPLAY "請輸入部門別(依憑單資料中的部門區分)<1>資材 "
+031000            "<2>總務 <3>產控 <4>工務  <5> 工程 "
+031100    DISPLAY
+031200   "<6>電腦 <7>醫療 <8>機電 <9>保鍚場 <16> 船務 <17>財管 <X>全部:"
+031300                 WITH NO ADVANCING
+031400    ACCEPT B-DEPT FREE.
+031500    IF B-DEPT <> "1" AND "2" AND "3" AND "4" AND "5" AND "6"
+031600       AND "7" AND "8" AND "9" AND "X" AND "16" AND "17"
+031700       DISPLAY "部門別錯誤!!"
+031800       %STOPRUN
+031900    END-IF.
+032000    DISPLAY "請輸入幣別(1-RMB,2-NTD,3-HKD,4-USD,0或空白-全部):"
+032100                      WITH NO ADVANCING
+032200    ACCEPT B-DOLLAR-ID FREE
+032300    IF B-DOLLAR-ID <> 1 AND <> 2 AND <> 3 AND <> 4 AND <> 0
+032400       DISPLAY "幣別輸入錯誤!!!"
+032500       %STOPRUN
+032600    END-IF
+032700    DISPLAY "請選擇跳頁方式(1-按廠別 2-按部門):" WITH NO ADVANCING08 AUG03
+032800    ACCEPT B-PRINT-KIND FREE                                      08 AUG03
+032900    IF B-PRINT-KIND <> "1" AND <> "2"                             08 AUG03
+033000       DISPLAY "請選擇正確的跳頁方式!!"                           08 AUG03
+033100    END-IF.                                                       08 AUG03
+033200    MOVE "N" TO B-SURE.
+033300    DISPLAY "是否確定執行(Y/N):" WITH NO ADVANCING.
+033400    ACCEPT  B-SURE FREE.
+033500
+033600 000-OPEN-FILE.
+033700    MOVE "  INCOME.SHR.DGACT;" TO DBBASES(2)
+033800    %DBOPENS(2#,"PROG;"#)
+033900    IF NOT DB-OK
+034000       %DBEXPLAIN2.
+034100    IF B-CO-NO = 2 AND B-CO-NO-KIND <> SPACE
+034200       %DBGET7S(2#,COMPANYM#,B-CO-NO-KIND#,CPM-CO-NO#)
+034300       IF NOT DB-OK
+034400          DISPLAY "無此公司別:" B-CO-NO-KIND
+034500          %STOPRUN.
+034600    IF B-FACT-NO <> SPACE
+034700       %DBGET7S(2#,FACTM#,B-FACT-NO#,FM-FACT-NO#)
+034800       IF NOT DB-OK
+034900          DISPLAY "無此廠別:" B-FACT-NO
+035000          %STOPRUN.
+035100    EVALUATE B-CO-NO
+035200      WHEN 1  %DBOPEN("  DBEXPM.DGYY.ACT;"#,"PS-EXPM3;"#)
+035300      WHEN 2  %DBOPEN("  DBEXPM.DGPY.ACT;"#,"PS-EXPM3;"#)
+035400      WHEN 3  %DBOPEN("  DBEXPM.DGKY.ACT;"#,"PS-EXPM3;"#)
+035500      WHEN 4  %DBOPEN("  DBEXPM.P55.ACT;"#,"PS-EXPM3;"#)
+035600      WHEN 5  %DBOPEN("  DBEXPM.DGYY.ACT;"#,"PS-EXPM3;"#)
+035700    END-EVALUATE
+035800    IF NOT DB-OK
+035900       %DBEXPLAIN2.
+036000    OPEN OUTPUT KSAM-F1
+036100    CLOSE KSAM-F1
+036200    OPEN I-O KSAM-F1.
+036300
+036400 000-CLOSE-FILE.
+036500    DISPLAY SPACE.
+036600    DISPLAY "處理完畢!!!"
+036700    CLOSE KSAM-F1
+036800    %DBCLOSES(2#,"FACTM;"#).
+036900    %DBCLOSE.
+037000
+037100 100-MAIN-RTN.
+037200    DISPLAY "資料處理中......"
+037300    DISPLAY SPACE.
+037400    PERFORM 200-FIND-EXPD.
+037500    PERFORM 400-OUTPUT-REPORT.
+037600
+037700 100-GET-CUST-NAME.
+037800    MOVE SPACE TO WK-CUST-NAME WK-PAY-MARK
+037900    %DBGET7(CUSM#,WK-CUST-NO#,CM-CUST-NO#)
+038000    IF DB-OK
+038100       MOVE CM-CUST-NAME TO WK-CUST-NAME
+038200       MOVE CM-PAY-MARK  TO WK-PAY-MARK
+038300    ELSE
+038400       IF NOT DB-OK
+038500          DISPLAY "無此供應商:" WK-CUST-NO
+038600       END-IF
+038700    END-IF.
+038800
+038900 100-GET-FACT-NAME.
+039000    MOVE SPACE TO WK-FACT-NAME
+039100    %DBGET7S(2#,FACTM#,WK-FACT-NO#,FM-FACT-NO#)
+039200    IF DB-OK
+039300       MOVE FM-FACT-NAME TO WK-FACT-NAME
+039400    ELSE
+039500       IF NOT DB-OK
+039600          DISPLAY "無此廠別:" WK-FACT-NO
+039700       END-IF
+039800    END-IF.
+039900
+040000 200-FIND-EXPD.
+040100    MOVE B-YY  TO WK-YY-L  WK-YY-R
+040200    MOVE B-MM  TO WK-MM-L  WK-MM-R
+040300    COMPUTE WK-YY-L = WK-YY-L - 1
+040400    COMPUTE WK-MM-L = WK-MM-L + 7
+040500    IF WK-MM-L > 12
+040600       COMPUTE WK-YY-L = WK-YY-L + 1
+040700       COMPUTE WK-MM-L = WK-MM-L - 12
+040800    END-IF
+040900    MOVE WK-YYMM-L TO WK-YYMMDD-L-R-1
+041000    MOVE 1         TO WK-DD-L-R
+041100    ADD 1          TO WK-YYMM-R                                   12 OCT03
+041200    IF WK-MM-R > 12                                               12 OCT03
+041300       ADD 1          TO WK-YY-R                                  12 OCT03
+041400       MOVE 1         TO WK-MM-R                                  12 OCT03
+041500    END-IF                                                        12 OCT03
+041600    DISPLAY "資料起止年月:" WK-YYMM-L "-" WK-YYMM-R
+041700    PERFORM VARYING WK-YYMM  FROM WK-YYMM-L BY 1
+041800           UNTIL WK-YYMM > WK-YYMM-R
+041900       IF WK-MM-RR > 12
+042000          ADD 1  TO WK-YY-RR
+042100          MOVE 1 TO WK-MM-RR
+042200       END-IF
+042300       DISPLAY "讀取 " WK-YYMM " 之憑單......"
+042400       %DBFIND(EXPD#,YYMM#,WK-YYMM#,ED-YYMM#)
+042500       IF DB-OK AND ENTRIES-COUNT > 0
+042600          MOVE "N" TO WK-EXPD-EOC
+042700          PERFORM UNTIL WK-EXPD-EOC = "Y"
+042800             %DBGET5(EXPD#)
+042900            IF DB-OK
+043000             IF (ED-EXPD-NO(1:3) = B-FACT-NO OR B-FACT-NO = SPACE)
+043100                 AND (ED-ORDR-NO(1:1) = B-KIND OR B-KIND = "X"
+043200                    OR (ED-ORDR-NO(1:1) <> "2" AND B-KIND = "8"))
+043300                 AND (ED-DEPT = B-DEPT OR B-DEPT = "X")
+043400               AND (ED-DOLLAR-ID = B-DOLLAR-ID OR B-DOLLAR-ID = 0)
+043500               AND ((B-MARK = "1" AND (ED-MARK = 1 OR 7))
+043600                  OR (B-MARK = "2" AND ED-MARK = 2)
+043700                  OR (B-MARK = SPACE AND (ED-MARK = 1 OR 2 OR 7)))
+043800                 AND ED-EXP-DATE <= B-YYMMDD
+043900                 AND ED-EXP-DATE >= WK-YYMMDD-L
+044000                 AND ((B-CO-NO-KIND = ED-CO-NO) OR                10 JUL03
+044100                     (B-CO-NO <> 2 AND B-CO-NO-KIND = SPACE
+044200                        AND B-CO-NO <> 5   ) OR (B-CO-NO = 5      DEC02 03
+044300                         AND ED-CO-NO = "G31")  )                 10 JUL03
+044400                    AND ED-ACCP-NO = SPACES                       08 AUG03
+044500                    PERFORM 200-CHECK-RELFACTD                    08 AUG03
+044600                    IF WK-RELFACT-MARK <> "Y"                     08 AUG03
+044700                       PERFORM 200-CHECK-SIGNEXPD
+044800                    END-IF                                        08 AUG03
+044900               END-IF
+045000             ELSE
+045100                IF DB-EOC
+045200                   MOVE "Y" TO WK-EXPD-EOC
+045300                END-IF
+045400             END-IF
+045500          END-PERFORM
+045600       END-IF
+045700    END-PERFORM.
+045800
+045900 200-CHECK-RELFACTD.                                              08 AUG03
+046000    MOVE "N" TO WK-RELFACT-MARK                                   08 AUG03
+046100    %DBFIND(RELFACTD#,PAY-FACT#,ED-EXPD-NO(1:3)#,RFD-PAY-FACT#)   08 AUG03
+046200    IF DB-OK AND ENTRIES-COUNT > 0                                08 AUG03
+046300       MOVE "N" TO WK-RELFACTD-EOC                                08 AUG03
+046400       PERFORM UNTIL WK-RELFACTD-EOC = "Y"                        08 AUG03
+046500          %DBGET5(RELFACTD#)                                      08 AUG03
+046600          IF DB-OK AND RFD-REV-FACT = ED-CUST-NO                  08 AUG03
+046700             MOVE "Y" TO WK-RELFACT-MARK                          08 AUG03
+046800          ELSE                                                    08 AUG03
+046900             IF DB-EOC                                            08 AUG03
+047000                MOVE "Y" TO WK-RELFACTD-EOC                       08 AUG03
+047100             END-IF                                               08 AUG03
+047200          END-IF                                                  08 AUG03
+047300       END-PERFORM                                                08 AUG03
+047400    END-IF.                                                       08 AUG03
+047500
+047600 200-CHECK-SIGNEXPD.
+047700    MOVE 0  TO WK-TRF-DAY
+047800    MOVE 0  TO WK-SIGN-DAY
+047900    MOVE "N" TO WK-ACCP-OK
+048000    MOVE "N" TO WK-EXIST-SIGNEXPD                                 11 AUG03
+048100    %DBFIND(SIGNEXPD#,EXPD-NO#,ED-EXPD-NO#,SE-EXPD-NO#)
+048200    IF DB-OK AND ENTRIES-COUNT > 0
+048300       MOVE "N" TO WK-SIGNEXPD-EOC
+048400       PERFORM UNTIL WK-SIGNEXPD-EOC = "Y"
+048500          %DBGET5(SIGNEXPD#)
+048600          IF DB-OK
+048700             MOVE "Y" TO WK-EXIST-SIGNEXPD                        11 AUG03
+048800             IF SE-DO-TIME = 0
+048900                MOVE SE-TRF-DAY  TO WK-TRF-DAY
+049000                MOVE SE-SIGN-DAY TO WK-SIGN-DAY
+049100             ELSE
+049200                MOVE "Y" TO WK-ACCP-OK
+049300             END-IF
+049400          ELSE
+049500             IF DB-EOC
+049600                MOVE "Y" TO WK-SIGNEXPD-EOC
+049700             END-IF
+049800          END-IF
+049900       END-PERFORM
+050000    END-IF.
+050100    IF WK-ACCP-OK = "N" AND WK-EXIST-SIGNEXPD = "Y"               11 AUG03
+050200        PERFORM 200-WRITE-KSAM-F1
+050300    END-IF.
+050400
+050500 200-WRITE-KSAM-F1.
+050600    INITIALIZE KSAM-R1.
+050700    MOVE ED-CUST-NO    TO WK-CUST-NO
+050800    PERFORM 100-GET-CUST-NAME
+050900    IF WK-PAY-MARK = B-PAY-MARK
+051000       MOVE SPACES TO K1-DEPT                                     08 AUG03
+051100       IF B-PRINT-KIND = "2"                                      08 AUG03
+051200          MOVE ED-DEPT        TO K1-DEPT                          08 AUG03
+051300       END-IF                                                     08 AUG03
+051400       MOVE ED-EXPD-NO(1:3)   TO K1-FACT-NO
+051500       MOVE ED-CUST-NO        TO K1-CUST-NO
+051600       MOVE ED-EXPD-NO        TO K1-EXPD-NO
+051700       READ KSAM-F1
+051800         INVALID KEY
+051900           MOVE ED-ACCT-NO    TO K1-ACCT-NO
+052000           MOVE ED-EXPDA      TO K1-EXPDA
+052100           IF ED-EXPD-NO(14:1) = "R"
+052200              COMPUTE K1-EXPDA = K1-EXPDA * -1
+052300           END-IF
+052400           MOVE K1-FACT-NO    TO WK-FACT-NO
+052500           PERFORM 100-GET-FACT-NAME
+052600           MOVE WK-FACT-NAME  TO K1-FACT-NAME
+052700           MOVE WK-CUST-NAME  TO K1-CUST-NAME
+052800           MOVE WK-PAY-MARK   TO K1-PAY-MARK
+052900           MOVE ED-DOLLAR-ID  TO K1-DOLLAR-ID
+053000           MOVE ED-DES2       TO K1-DES2
+053100           MOVE ED-MARK       TO K1-MARK
+053200           MOVE WK-TRF-DAY    TO K1-TRF-DAY
+053300           MOVE WK-SIGN-DAY   TO K1-SIGN-DAY
+053400           IF ED-MARK = 7
+053500              MOVE "Y"        TO K1-ACCP-MARK
+053600           ELSE
+053700              MOVE "N"        TO K1-ACCP-MARK
+053800           END-IF
+053900           WRITE KSAM-R1 END-WRITE
+054000         NOT INVALID KEY
+054100           DISPLAY "憑單重復:" ED-EXPD-NO
+054200           ADD ED-EXPDA        TO K1-EXPDA
+054300           REWRITE KSAM-R1 END-REWRITE
+054400      END-READ
+054500   END-IF.
+054600
+054700 400-OUTPUT-REPORT.
+054800    INITIALIZE KSAM-R1.
+054900    START KSAM-F1 KEY IS >= K1-KEY
+055000      INVALID KEY
+055100        DISPLAY "此范圍無資料!!!"
+055200        %STOPRUN
+055300      NOT INVALID KEY
+055400        OPEN OUTPUT LIST-F1
+055500        DISPLAY "報表列印中......"
+055600        MOVE "N" TO WK-END
+055700        MOVE B-YYMMDD TO H-BILL-DATE
+055800        MOVE WK-DATE  TO H-PRINT-DATE
+055900        MOVE SPACE TO LIST-R1 WRITE LIST-R1 FROM REPORT-START
+056000        PERFORM UNTIL WK-END = "Y"
+056100           READ KSAM-F1 NEXT RECORD AT END
+056200              PERFORM 400-PRINT-TOT
+056300              MOVE "Y" TO WK-END
+056400           NOT AT END
+056500              PERFORM 400-PRINT-CONTROL
+056600           END-READ
+056700        END-PERFORM
+056800        MOVE SPACE TO LIST-R1 WRITE LIST-R1 FROM REPORT-END
+056900        CLOSE LIST-F1
+057000    END-START.
+057100
+057200 400-PRINT-CONTROL.
+057300     INITIALIZE DETAIL-1.
+057400     IF WK-PAGE = 0
+057500         PERFORM 400-PRINT-HEAD
+057600         MOVE K1-DEPT          TO WK-DEPT                         08 AUG03
+057700         MOVE K1-FACT-NO       TO WK-FACT-NO
+057800         MOVE K1-PAY-MARK      TO WK-PAY-MARK
+057900     END-IF
+058000     IF (K1-FACT-NO <> WK-FACT-NO AND B-PRINT-KIND = "1")         08 AUG03
+058100         OR (K1-DEPT <> WK-DEPT AND B-PRINT-KIND = "2")           08 AUG03
+058200         MOVE WK-FACT-EXPDA-RMB   TO T-FACT-EXPDA-RMB             10 JUL03
+058300         MOVE WK-FACT-EXPDA-NTD   TO T-FACT-EXPDA-NTD             10 JUL03
+058400         MOVE WK-FACT-EXPDA-HKD   TO T-FACT-EXPDA-HKD             10 JUL03
+058500         MOVE WK-FACT-EXPDA-USD   TO T-FACT-EXPDA-USD             10 JUL03
+058600         IF B-PRINT-KIND = "1"                                    08 AUG03
+058700           MOVE WK-FACT-NO          TO T-FACT-NO                  10 JUL03
+058800         ELSE                                                     08 AUG03
+058900           MOVE SPACES              TO T-FACT-NO                  08 AUG03
+059000         END-IF                                                   08 AUG03
+059100         INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-7 BEFORE 1    10 JUL03
+059200         INITIALIZE LIST-R1 WRITE LIST-R1 FROM TOT-FACT BEFORE 1  10 JUL03
+059300         INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-7 BEFORE 1
+059400*        INITIALIZE LIST-R1 WRITE LIST-R1 FROM END-1  BEFORE 1    10 JUL03
+059500         INITIALIZE LIST-R1 WRITE LIST-R1 BEFORE PAGE
+059600         PERFORM 400-PRINT-HEAD
+059700         MOVE 0 TO WK-FACT-EXPDA-RMB                              10 JUL03
+059800         MOVE 0 TO WK-FACT-EXPDA-NTD                              10 JUL03
+059900         MOVE 0 TO WK-FACT-EXPDA-HKD                              10 JUL03
+060000         MOVE 0 TO WK-FACT-EXPDA-USD                              10 JUL03
+060100     END-IF.
+060200     IF WK-LINE > 53
+060300         INITIALIZE LIST-R1 WRITE LIST-R1 FROM END-1  BEFORE 1
+060400         INITIALIZE LIST-R1 WRITE LIST-R1 BEFORE PAGE
+060500         PERFORM 400-PRINT-HEAD
+060600     END-IF.
+060700     MOVE K1-FACT-NO        TO WK-FACT-NO
+060800     MOVE K1-DEPT           TO WK-DEPT                            08 AUG03
+060900     MOVE K1-CUST-NO        TO D-CUST-NO
+061000     MOVE K1-EXPD-NO        TO D-EXPD-NO
+061100     MOVE K1-ACCT-NO        TO D-ACCT-NO
+061200     MOVE K1-EXPDA          TO D-EXPDA
+061300     EVALUATE K1-DOLLAR-ID
+061400        WHEN  1
+061500          MOVE "RMB"    TO D-DOLLAR-ID
+061600          ADD K1-EXPDA  TO WK-TOT-EXPDA-RMB
+061700          ADD K1-EXPDA  TO WK-FACT-EXPDA-RMB                      10 JUL03
+061800        WHEN  2
+061900          MOVE "NTD"    TO D-DOLLAR-ID
+062000          ADD K1-EXPDA  TO WK-TOT-EXPDA-NTD
+062100          ADD K1-EXPDA  TO WK-FACT-EXPDA-NTD                      10 JUL03
+062200        WHEN  3
+062300          MOVE "HKD"    TO D-DOLLAR-ID
+062400          ADD K1-EXPDA  TO WK-TOT-EXPDA-HKD
+062500          ADD K1-EXPDA  TO WK-FACT-EXPDA-HKD                      10 JUL03
+062600        WHEN  4
+062700          MOVE "USD"    TO D-DOLLAR-ID
+062800          ADD K1-EXPDA  TO WK-TOT-EXPDA-USD
+062900          ADD K1-EXPDA  TO WK-FACT-EXPDA-USD                      10 JUL03
+063000     END-EVALUATE
+063100     MOVE K1-DES2           TO D-DES2
+063200     MOVE K1-MARK           TO D-MARK
+063300     MOVE K1-TRF-DAY        TO D-TRF-DAY
+063400     MOVE K1-SIGN-DAY       TO D-SIGN-DAY
+063500     MOVE K1-ACCP-MARK      TO D-ACCP-MARK
+063600     MOVE K1-CUST-NAME      TO D-CUST-NAME
+063700     INITIALIZE LIST-R1 WRITE LIST-R1 FROM DETAIL-1 BEFORE 1
+063800     INITIALIZE LIST-R1 WRITE LIST-R1 FROM DETAIL-2 BEFORE 1
+063900*    ADD 1 TO WK-LINE.                                            08 AUG03
+064000     ADD 2 TO WK-LINE.                                            08 AUG03
+064100
+064200 400-PRINT-HEAD.
+064300     ADD 1 TO WK-PAGE
+064400     INITIALIZE HEAD-3                                            08 AUG03
+064500     MOVE WK-PAGE TO H-PAGE
+064600     IF B-PRINT-KIND = "1"                                        08 AUG03
+064700*      MOVE K1-FACT-NO        TO H-FACT-NO                        08 AUG03
+064800*      MOVE K1-FACT-NAME      TO H-FACT-NAME                      08 AUG03
+064900       MOVE "廠別:("          TO H-HEAD-DEPT(1:6)                 08 AUG03
+065000       MOVE K1-FACT-NO        TO H-HEAD-DEPT(7:3)                 08 AUG03
+065100       MOVE ")"               TO H-HEAD-DEPT(10:1)                08 AUG03
+065200       MOVE K1-FACT-NAME      TO H-HEAD-DEPT(11:26)               08 AUG03
+065300     ELSE                                                         08 AUG03
+065400       MOVE "部門:"           TO H-HEAD-DEPT(1:6)                 08 AUG03
+065500       EVALUATE K1-DEPT                                           08 AUG03
+065600         WHEN "1"  MOVE "資材" TO H-HEAD-DEPT(7:30)               08 AUG03
+065700         WHEN "2"  MOVE "總務" TO H-HEAD-DEPT(7:30)               08 AUG03
+065800         WHEN "3"  MOVE "產控" TO H-HEAD-DEPT(7:30)               08 AUG03
+065900         WHEN "4"  MOVE "工務" TO H-HEAD-DEPT(7:30)               08 AUG03
+066000         WHEN "5"  MOVE "工程部"   TO H-HEAD-DEPT(7:30)           08 AUG03
+066100         WHEN "6"  MOVE "電腦中心" TO H-HEAD-DEPT(7:30)           08 AUG03
+066200         WHEN "7"  MOVE "醫療中心" TO H-HEAD-DEPT(7:30)           08 AUG03
+066300         WHEN "8"  MOVE "機電部"   TO H-HEAD-DEPT(7:30)           08 AUG03
+066400         WHEN "9"  MOVE "保瘍廠"   TO H-HEAD-DEPT(7:30)           08 AUG03
+066500         WHEN OTHER MOVE "未指定部門" TO H-HEAD-DEPT(7:30)        08 AUG03
+066600       END-EVALUATE                                               08 AUG03
+066700     END-IF                                                       08 AUG03
+066800     IF K1-PAY-MARK = "1"
+066900         MOVE "國內"        TO H-PAY-MARK
+067000     ELSE
+067100         MOVE "香港"        TO H-PAY-MARK
+067200     END-IF
+067300     INITIALIZE LIST-R1 WRITE LIST-R1 BEFORE 1
+067400     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-1 BEFORE 1
+067500     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-2 BEFORE 1
+067600     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-3 BEFORE 1
+067700     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-4 BEFORE 1
+067800     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-5 BEFORE 1
+067900     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-6 BEFORE 1
+068000     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-7 BEFORE 1
+068100     MOVE  8  TO  WK-LINE.
+068200
+068300 400-PRINT-TOT.
+068400     MOVE WK-FACT-EXPDA-RMB   TO T-FACT-EXPDA-RMB                 10 JUL03
+068500     MOVE WK-FACT-EXPDA-NTD   TO T-FACT-EXPDA-NTD                 10 JUL03
+068600     MOVE WK-FACT-EXPDA-HKD   TO T-FACT-EXPDA-HKD                 10 JUL03
+068700     MOVE WK-FACT-EXPDA-USD   TO T-FACT-EXPDA-USD                 10 JUL03
+068800     IF B-PRINT-KIND = "1"                                        08 AUG03
+068900       MOVE WK-FACT-NO          TO T-FACT-NO                      10 JUL03
+069000     ELSE                                                         08 AUG03
+069100       MOVE SPACES              TO T-FACT-NO                      08 AUG03
+069200     END-IF                                                       08 AUG03
+069300     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-7 BEFORE 1        10 JUL03
+069400     INITIALIZE LIST-R1 WRITE LIST-R1 FROM TOT-FACT BEFORE 1      10 JUL03
+069500     MOVE SPF-USER-NAME    TO E-PRINT-NAME
+069600     MOVE WK-TOT-EXPDA-RMB TO T-TOT-EXPDA-RMB
+069700     MOVE WK-TOT-EXPDA-NTD TO T-TOT-EXPDA-NTD
+069800     MOVE WK-TOT-EXPDA-HKD TO T-TOT-EXPDA-HKD
+069900     MOVE WK-TOT-EXPDA-USD TO T-TOT-EXPDA-USD
+070000     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-7 BEFORE 1
+070100     INITIALIZE LIST-R1 WRITE LIST-R1 FROM TOT-1  BEFORE 1
+070200     INITIALIZE LIST-R1 WRITE LIST-R1 FROM HEAD-7 BEFORE 1
+070300     INITIALIZE LIST-R1 WRITE LIST-R1 FROM END-3  BEFORE 1.

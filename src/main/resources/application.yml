@@ -1,0 +1,57 @@
+spring:
+  port: 8080
+  dubbo:
+    name: provider2
+    address: zookeeper://127.0.0.1:2181
+    protocol:
+      name: dubbo
+      port: 20880
+      scan: com.spring.springboot.service
+  datasource:
+    master:
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://127.0.0.1:3306/test
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/test
+      jdbcUrl: jdbc:mysql://127.0.0.1:3306/test
+      username: root
+      password: 1234
+      maxActive: 139
+      driverClass: com.mysql.cj.jdbc.Driver
+    slave1:
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://127.0.0.1:3306/test
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/test
+      jdbcUrl: jdbc:mysql://127.0.0.1:3306/test
+      username: root
+      password: 1234
+      maxActive: 139
+      driverClass: com.mysql.cj.jdbc.Driver
+    slave2:
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://127.0.0.1:3306/test
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/test
+      jdbcUrl: jdbc:mysql://127.0.0.1:3306/test
+      username: root
+      password: 1234
+      maxActive: 139
+      driverClass: com.mysql.cj.jdbc.Driver
+      
+kabc:
+  type: com.alibaba.druid.pool.DruidDataSource
+  url: jdbc:mysql://127.0.0.1:3306/test
+  jdbc-url: jdbc:mysql://127.0.0.1:3306/test
+  jdbcUrl: jdbc:mysql://127.0.0.1:3306/test
+  username: root
+  password: 1234
+  maxActive: 139
+  driverClass: com.mysql.cj.jdbc.Driver
+
+redis: 
+  host: localhost
+  port: 6379
+
+#tomcat
+server:
+  tomcat:
+    max-connections: 20000
+    max-threads: 10000
