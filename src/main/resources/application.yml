@@ -7,12 +7,12 @@ spring:
       name: dubbo
       port: 20880
       scan: com.spring.springboot.service
-  datasource:
+      
+jdbc:
+  database:
     master:
       type: com.alibaba.druid.pool.DruidDataSource
       url: jdbc:mysql://127.0.0.1:3306/test
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/test
-      jdbcUrl: jdbc:mysql://127.0.0.1:3306/test
       username: root
       password: 1234
       maxActive: 139
@@ -20,8 +20,6 @@ spring:
     slave1:
       type: com.alibaba.druid.pool.DruidDataSource
       url: jdbc:mysql://127.0.0.1:3306/test
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/test
-      jdbcUrl: jdbc:mysql://127.0.0.1:3306/test
       username: root
       password: 1234
       maxActive: 139
@@ -29,12 +27,12 @@ spring:
     slave2:
       type: com.alibaba.druid.pool.DruidDataSource
       url: jdbc:mysql://127.0.0.1:3306/test
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/test
-      jdbcUrl: jdbc:mysql://127.0.0.1:3306/test
       username: root
       password: 1234
       maxActive: 139
       driverClass: com.mysql.cj.jdbc.Driver
+    config:
+      slavenum: 2
       
 kabc:
   type: com.alibaba.druid.pool.DruidDataSource

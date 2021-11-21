@@ -30,8 +30,8 @@ public class DataSourceConfiguration {
 
 	@Bean(name = "writeDataSource")
 	@Primary
-	@ConfigurationProperties(prefix = "spring.datasource.master")
-	public DruidDataSource writeDataSource() {
+	@ConfigurationProperties(prefix = "jdbc.database.master")
+	public DataSource writeDataSource() {
 		logger.info("-------------------- writeDataSource init ---------------------");
 		DruidDataSource druidDataSource = new DruidDataSource();
 		// 设置自定义filter
@@ -40,8 +40,8 @@ public class DataSourceConfiguration {
 	}
 
 	@Bean(name = "readDataSource1")
-	@ConfigurationProperties(prefix = "spring.datasource.slave1")
-	public DruidDataSource readDataSourceOne() {
+	@ConfigurationProperties(prefix = "jdbc.database.slave1")
+	public DataSource readDataSourceOne() {
 		logger.info("-------------------- readDataSourceOne init ---------------------");
 		DruidDataSource druidDataSource = new DruidDataSource();
 		// 设置自定义filter
@@ -50,8 +50,8 @@ public class DataSourceConfiguration {
 	}
 
 	@Bean(name = "readDataSource2")
-	@ConfigurationProperties(prefix = "spring.datasource.slave2")
-	public DruidDataSource readDataSourceTwo() {
+	@ConfigurationProperties(prefix = "jdbc.database.slave2")
+	public DataSource readDataSourceTwo() {
 		logger.info("-------------------- readDataSourceTwo init ---------------------");
 		DruidDataSource druidDataSource = new DruidDataSource();
 		// 设置自定义filter

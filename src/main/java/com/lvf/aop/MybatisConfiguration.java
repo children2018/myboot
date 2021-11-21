@@ -43,8 +43,8 @@ public class MybatisConfiguration extends MybatisAutoConfiguration {
 		super(properties, interceptorsProvider, resourceLoader, databaseIdProvider, configurationCustomizersProvider);
 	}
 
-	//@Value("${spring.datasource.slaver.num}")
-	private String dataSourceSize = "2";
+	@Value("${jdbc.database.config.slavenum}")
+	private String dataSourceSize;
 
 	/**
 	 * 重载父类 sqlSessionFactory
