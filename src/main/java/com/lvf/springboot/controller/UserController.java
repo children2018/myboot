@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.lvf.springboot.model.PageBean;
+import com.lvf.springboot.model.RespUtil;
 import com.lvf.springboot.model.User;
 import com.lvf.springboot.service.RedisCache;
 import com.lvf.springboot.service.UserService;
@@ -39,6 +43,15 @@ public class UserController {
         if(user!=null){
         }
         return user;
+    }
+    
+    @RequestMapping("/getUserPage")
+    @ResponseBody
+    public RespUtil getUserPage(PageBean pageBean) {
+    	PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
+        List<User> userList = userService.getUserInfo();
+        PageInfo pageInfo = new PageInfo(userList);
+        return RespUtil.success(pageInfo);
     }
     
     @RequestMapping("/insertinfo")
