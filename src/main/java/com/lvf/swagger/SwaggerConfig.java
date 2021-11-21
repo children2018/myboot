@@ -23,9 +23,9 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
-                .title("spring boot study Doc by children2018")
+                .title("spring boot 2.x study doc")
                 .description("Hello world!")
-                .version("1.0")
+                .version("2.0")
                 .build();
     }
 
