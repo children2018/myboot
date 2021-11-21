@@ -53,3 +53,16 @@ server:
   tomcat:
     max-connections: 20000
     max-threads: 10000
+    
+mybatis:
+  # 包下所有类的别名
+  type-aliases-package: top.linruchang.product_service.domain
+  # dao层的sql映射路径
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    # 缓存开启
+    cache-enabled: true
+    # 懒加载开启
+    lazy-loading-enabled: true
+    # SQL打印日志所使用的日志类 - 关键
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
