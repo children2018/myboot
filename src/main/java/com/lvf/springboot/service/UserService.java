@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Semaphore;
 import java.util.function.Function;
@@ -14,11 +15,15 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lvf.springboot.mapper.UserMapper;
 import com.lvf.springboot.model.Location;
 import com.lvf.springboot.model.User;
+import com.lvf.springboot.opentsdb.OpentsdbTest;
 
 /**
  * Created by zl on 2015/8/27.
@@ -265,6 +270,36 @@ public class UserService {
 		for (int j = 0; j < saveList.size(); j ++) {
 			new Thread(myRun).start();
 		}
+	}
+	
+
+	public void hello() {
+		
+		RestTemplate restTemplate = new RestTemplate();
+
+		long start = System.currentTimeMillis();
+		CountDownLatch cdl = new CountDownLatch(100000);
+		for (int index = 1 ; index <= 100000 ; index ++) {
+			
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					OpentsdbTest openTest = new OpentsdbTest();
+					openTest.test();
+					cdl.countDown();
+				}
+			}).start();
+		}
+		try {
+			cdl.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("it's done");
+		System.out.println("cost.mis:" + (end - start));
+		System.out.println("cost.sec:" + (end - start)/1000);
 	}
 
 }

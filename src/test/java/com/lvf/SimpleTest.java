@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.lvf.springboot.callable.Kabc;
 import com.lvf.springboot.mapper.UserMapper;
 import com.lvf.springboot.model.User;
+import com.lvf.springboot.opentsdb.OpentsdbTest;
 import com.lvf.springboot.service.UserService;
 
 @RunWith(SpringRunner.class)
@@ -36,6 +37,61 @@ public class SimpleTest {
 		System.out.println("current....");
 	}
 	
+	@Test
+	public void test222() {
+		int max = 10000;
+		long start = System.currentTimeMillis();
+		CountDownLatch cdl = new CountDownLatch(max);
+		CountDownLatch cd2 = new CountDownLatch(max);
+		CountDownLatch cd3 = new CountDownLatch(max);
+		OpentsdbTest openTest = new OpentsdbTest();
+		for (int index = 1 ; index <= max ; index ++) {
+			
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					openTest.testLocalhostSpringBoot2();
+					cdl.countDown();
+				}
+			}).start();
+			
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					openTest.testLocalhostSpringBoot3();
+					cd2.countDown();
+				}
+			}).start();
+			
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					openTest.testLocalhostSpringBoot5();
+					cd3.countDown();
+				}
+			}).start();
+		}
+		try {
+			cdl.await();
+			cd2.await();
+			cd3.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("it's done");
+		System.out.println("cost.mis:" + (end - start));
+		System.out.println("cost.sec:" + (end - start)/1000);
+		System.out.println("1yes:" + openTest.yes.intValue());
+		System.out.println("1no:" + openTest.no.intValue());
+		System.out.println("2yes:" + openTest.yes2.intValue());
+		System.out.println("2no:" + openTest.no2.intValue());
+		System.out.println("3yes:" + openTest.yes3.intValue());
+		System.out.println("3no:" + openTest.no3.intValue());
+	}
 	
 	@Test
 	public void insertsListWithForkWithSubregion() {

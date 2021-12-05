@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @author Administrator
  */
 @Service
-@Lazy(false)
+//@Lazy(false)
 public class SpringContextHolder implements ApplicationContextAware, DisposableBean {
 
 	private static ApplicationContext applicationContext = null;
@@ -27,18 +27,19 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getBean(String name) {
+	public <T> T getBean(String name) {
+		System.out.println("testSPring.get:" + applicationContext);
 		return (T) applicationContext.getBean(name);
 	}
 
-	public static <T> T getBean(Class<T> requiredType) {
+	public <T> T getBean(Class<T> requiredType) {
 		return applicationContext.getBean(requiredType);
 	}
 
 	/**
 	 * ApplicationContext置为null
 	 */
-	public static void clearHolder() {
+	public void clearHolder() {
 		if (logger.isDebugEnabled()) {
 			logger.debug("clearHolder.applicationContext:" + applicationContext);
 		}
@@ -48,12 +49,13 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 
 	@Override
 	public void destroy() throws Exception {
-		SpringContextHolder.clearHolder();
+		this.clearHolder();
 	}
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext=applicationContext;
+		System.out.println("testSPring:" + this.applicationContext);
 	}
 	
 }

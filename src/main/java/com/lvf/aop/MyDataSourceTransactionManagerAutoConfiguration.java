@@ -1,6 +1,7 @@
 package com.lvf.aop;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MyDataSourceTransactionManagerAutoConfiguration extends DataSourceTransactionManagerAutoConfiguration {
 	
+	@Autowired
+	private SpringContextHolder springContextHolder;
 	
 	private Logger logger = Logger.getLogger(MyDataSourceTransactionManagerAutoConfiguration.class);
 	/**
@@ -26,6 +29,6 @@ public class MyDataSourceTransactionManagerAutoConfiguration extends DataSourceT
 	@Bean
 	public DataSourceTransactionManager transactionManagers() {
 		logger.info("-------------------- transactionManager init ---------------------");
-		return new DataSourceTransactionManager(SpringContextHolder.getBean("roundRobinDataSouceProxy"));
+		return new DataSourceTransactionManager(springContextHolder.getBean("roundRobinDataSouceProxy"));
 	}
 }

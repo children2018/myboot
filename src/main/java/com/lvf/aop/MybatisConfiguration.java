@@ -14,6 +14,7 @@ import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.mybatis.spring.boot.autoconfigure.MybatisProperties;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -42,6 +43,9 @@ public class MybatisConfiguration extends MybatisAutoConfiguration {
 			ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider) {
 		super(properties, interceptorsProvider, resourceLoader, databaseIdProvider, configurationCustomizersProvider);
 	}
+	
+	@Autowired
+	private SpringContextHolder springContextHolder;
 
 	@Value("${jdbc.database.config.slavenum}")
 	private String dataSourceSize;
@@ -66,16 +70,17 @@ public class MybatisConfiguration extends MybatisAutoConfiguration {
 	 */
 	@Bean(name = "roundRobinDataSouceProxy")
 	public AbstractRoutingDataSource roundRobinDataSouceProxy() {
+		System.out.println("dataSourceSize:" + dataSourceSize);
 		int size = Integer.parseInt(dataSourceSize);
 		MyAbstractRoutingDataSource proxy = new MyAbstractRoutingDataSource(size);
 		Map<Object, Object> targetDataSources = new HashMap<Object, Object>();
-		DataSource writeDataSource = SpringContextHolder.getBean("writeDataSource");
+		DataSource writeDataSource = springContextHolder.getBean("writeDataSource");
 		// 加载主库配置
-		targetDataSources.put(DataSourceType.WRITE.getType(), SpringContextHolder.getBean("writeDataSource"));
+		targetDataSources.put(DataSourceType.WRITE.getType(), springContextHolder.getBean("writeDataSource"));
 
 		// 加载从库配置
 		for (int i = 0; i < size; i++) {
-			targetDataSources.put("" + i, SpringContextHolder.getBean("readDataSource" + (i + 1)));
+			targetDataSources.put("" + i, springContextHolder.getBean("readDataSource" + (i + 1)));
 		}
 		// 指定默认的数据源
 		proxy.setDefaultTargetDataSource(writeDataSource);
