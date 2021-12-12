@@ -40,7 +40,7 @@ public class OpentsdbTest {
 	
 	public void testLocalhostSpringBoot2() {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = "http://192.168.1.4:8080/hello/test";
+		String url = "http://192.168.1.5:8080/hello/test";
 		String resultStr = null;
 		JSONObject data = new JSONObject();
 		try {
@@ -55,7 +55,7 @@ public class OpentsdbTest {
 	
 	public void testLocalhostSpringBoot3() {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = "http://192.168.1.4:8081/hello/test";
+		String url = "http://192.168.1.5:8081/hello/test";
 		String resultStr = null;
 		JSONObject data = new JSONObject();
 		try {
@@ -70,7 +70,7 @@ public class OpentsdbTest {
 	
 	public void testLocalhostSpringBoot5() {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = "http://192.168.1.4:8082/hello/test";
+		String url = "http://192.168.1.5:8082/hello/test";
 		String resultStr = null;
 		JSONObject data = new JSONObject();
 		try {

@@ -1,6 +1,7 @@
 package com.lvf.springboot.controller;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,13 +46,14 @@ public class HelloController {
 		return kabc;
 	}
 	//http://192.168.1.4:8082/hello/test2
+	//nohup java -Xmx9216m -Xms9216m -jar myboot-0.0.1.jar &
 	@ResponseBody
 	@GetMapping("/test2")
 	public void test2() {
-		int max = 10000;
+		int max = 5000;
 		long start = System.currentTimeMillis();
-		CountDownLatch cdl = new CountDownLatch(max);
-		CountDownLatch cd2 = new CountDownLatch(max);
+		final CountDownLatch cdl = new CountDownLatch(max);
+		final CountDownLatch cd2 = new CountDownLatch(max);
 //		CountDownLatch cd3 = new CountDownLatch(max);
 		OpentsdbTest openTest = new OpentsdbTest();
 		for (int index = 1 ; index <= max ; index ++) {
@@ -84,9 +86,9 @@ public class HelloController {
 			}).start();*/
 		}
 		try {
-			cdl.await();
-			cd2.await();
-//			cd3.await();
+			cdl.await(60 , TimeUnit.SECONDS);
+			cd2.await(60 , TimeUnit.SECONDS);
+//			cd3.await(60 , TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -107,7 +109,7 @@ public class HelloController {
 	public void test3() {
 		int max = 10000;
 		long start = System.currentTimeMillis();
-		CountDownLatch cdl = new CountDownLatch(max);
+		final CountDownLatch cdl = new CountDownLatch(max);
 		OpentsdbTest openTest = new OpentsdbTest();
 		for (int index = 1 ; index <= max ; index ++) {
 			
@@ -139,7 +141,7 @@ public class HelloController {
 			}).start();*/
 		}
 		try {
-			cdl.await();
+			cdl.await(60 , TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -157,9 +159,9 @@ public class HelloController {
 	public void test5() {
 		int max = 10000;
 		long start = System.currentTimeMillis();
-		CountDownLatch cdl = new CountDownLatch(max);
-		CountDownLatch cd2 = new CountDownLatch(max);
-		CountDownLatch cd3 = new CountDownLatch(max);
+		final CountDownLatch cdl = new CountDownLatch(max);
+		final CountDownLatch cd2 = new CountDownLatch(max);
+		final CountDownLatch cd3 = new CountDownLatch(max);
 		OpentsdbTest openTest = new OpentsdbTest();
 		for (int index = 1 ; index <= max ; index ++) {
 			
@@ -191,9 +193,9 @@ public class HelloController {
 			}).start();
 		}
 		try {
-			cdl.await();
-			cd2.await();
-			cd3.await();
+			cdl.await(60 , TimeUnit.SECONDS);
+			cd2.await(60 , TimeUnit.SECONDS);
+			cd3.await(60 , TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
