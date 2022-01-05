@@ -130,6 +130,16 @@ public class UserService {
 		while (true) {
 		}
 	}
+	
+	public void insertInfoWithForkOnlyOne() {
+		int i = new Random().nextInt(20);
+		User user = new User();
+		user.setId(UUID.randomUUID().toString());
+		user.setAge(i);
+		user.setName("jack" + i);
+		user.setPassword("password" + i);
+		userMapper.insert(user);
+	}
 
 	public void insertInfoWithFork() {
 		List<User> userList = new ArrayList<User>();

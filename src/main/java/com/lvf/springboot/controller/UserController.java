@@ -3,10 +3,13 @@ package com.lvf.springboot.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -17,6 +20,7 @@ import com.github.pagehelper.PageInfo;
 import com.lvf.springboot.model.PageBean;
 import com.lvf.springboot.model.RespUtil;
 import com.lvf.springboot.model.User;
+import com.lvf.springboot.opentsdb.OpentsdbTest;
 import com.lvf.springboot.service.RedisCache;
 import com.lvf.springboot.service.UserService;
 
@@ -119,7 +123,39 @@ public class UserController {
     	return u;
     }
     
-    
+    @ResponseBody
+	@GetMapping("/test10")
+	public void test10() {
+		int max = 20000;
+		long start = System.currentTimeMillis();
+		final CountDownLatch cdl = new CountDownLatch(max);
+		final CountDownLatch cdl2 = new CountDownLatch(max);
+		for (int index = 1 ; index <= max ; index ++) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					cdl2.countDown();
+					try {
+						cdl2.await();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					userService.insertInfoWithForkOnlyOne();
+					cdl.countDown();
+				}
+			}).start();
+			
+		}
+		try {
+			cdl.await(60 , TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("it's done");
+		System.out.println("cost.mis:" + (end - start));
+		System.out.println("cost.sec:" + (end - start)/1000);
+	}
     
     @RequestMapping("/process")
     @ResponseBody

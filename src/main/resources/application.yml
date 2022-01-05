@@ -6,6 +6,9 @@ spring:
       name: dubbo
       port: 20880
       scan: com.spring.springboot.service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mymongo
       
 jdbc:
   database:
@@ -14,21 +17,21 @@ jdbc:
       url: jdbc:mysql://192.168.1.2:3306/test
       username: root
       password: 1234
-      maxActive: 139
+      maxActive: 1024
       driverClass: com.mysql.cj.jdbc.Driver
     slave1:
       type: com.alibaba.druid.pool.DruidDataSource
       url: jdbc:mysql://192.168.1.2:3306/test
       username: root
       password: 1234
-      maxActive: 139
+      maxActive: 1024
       driverClass: com.mysql.cj.jdbc.Driver
     slave2:
       type: com.alibaba.druid.pool.DruidDataSource
       url: jdbc:mysql://192.168.1.2:3306/test
       username: root
       password: 1234
-      maxActive: 139
+      maxActive: 1024
       driverClass: com.mysql.cj.jdbc.Driver
     config:
       slavenum: 2
@@ -48,10 +51,19 @@ redis:
   port: 6379
 
 #tomcat
+#server:
+#  port: 8082
+#  tomcat:
+#    max-connections: 20000
+#    max-threads: 1000
+#    accept-count: 20000
+
 server:
   port: 8082
-  tomcat:
-    max-connections: 20000
-    max-threads: 1000
-    accept-count: 20000
+  tomcat: 
+    uri-encoding: UTF-8
+    max-threads: 10000 #最大工作线程数量
+    min-spare-threads: 20 #最小工作线程数量
+    max-connections: 10000 #一瞬间最大支持的并发的连接数
+    accept-count: 200 #等待队列长度
     

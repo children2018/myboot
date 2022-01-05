@@ -16,6 +16,8 @@ public class OpentsdbTest {
 	public volatile AtomicInteger yes3 = new AtomicInteger();
 	public volatile AtomicInteger no3 = new AtomicInteger();
 	
+	String ip = "localhost:8082";
+	
 	public void test() {
 		RestTemplate restTemplate = new RestTemplate();
 		String url = "http://47.240.169.234:4242/api/put?summary";
@@ -40,7 +42,7 @@ public class OpentsdbTest {
 	
 	public void testLocalhostSpringBoot2() {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = "http://192.168.1.5:8080/hello/test";
+		String url = "http://"+ip+"/hello/test";
 		String resultStr = null;
 		JSONObject data = new JSONObject();
 		try {
@@ -55,7 +57,7 @@ public class OpentsdbTest {
 	
 	public void testLocalhostSpringBoot3() {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = "http://192.168.1.5:8081/hello/test";
+		String url = "http://"+ip+"/hello/test";
 		String resultStr = null;
 		JSONObject data = new JSONObject();
 		try {
@@ -70,7 +72,7 @@ public class OpentsdbTest {
 	
 	public void testLocalhostSpringBoot5() {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = "http://192.168.1.5:8082/hello/test";
+		String url = "http://"+ip+"/hello/test";
 		String resultStr = null;
 		JSONObject data = new JSONObject();
 		try {
