@@ -2,7 +2,7 @@ package com.lvf.springboot.singlelist;
 
 import java.util.List;
 
-public class Example extends SingleToList<String> {
+public class Example extends SingleToList {/*
 	
 	public static void main(String[] args) {
 
@@ -15,11 +15,11 @@ public class Example extends SingleToList<String> {
 		
 		for (int i = 0; i < max; i++) {
 			final int iii = i;
-		/*	try {
+			try {
 				Thread.sleep(9);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}*/
+			}
 			new Thread(new Runnable() {
 				public void run() {
 					test.add("index:" + iii);
@@ -32,9 +32,4 @@ public class Example extends SingleToList<String> {
 	}
 
 
-	@Override
-	public void save(List<String> list) {
-		System.out.println("list.size():" + list.size());
-	}
-
-}
+*/}

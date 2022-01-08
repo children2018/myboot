@@ -7,9 +7,6 @@ import org.apache.ibatis.annotations.Param;
 
 import com.lvf.springboot.model.User;
 
-/**
- * Created by zl on 2015/8/27.
- */
 public interface UserMapper {
 	
     public List<User> findUserInfo();
