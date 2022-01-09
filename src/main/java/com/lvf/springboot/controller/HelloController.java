@@ -2,6 +2,7 @@ package com.lvf.springboot.controller;
 
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -336,5 +337,74 @@ public class HelloController {
 		System.out.println("1yes:" + yes.intValue());
 		System.out.println("1no:" + no.intValue());
 	}
+	
+	//http://192.168.1.5:8082/hello/test8?maxx=202313
+		@ResponseBody
+		@GetMapping("/test8")
+		public void test8(int maxx) {
+			int max = maxx;
+			long start = System.currentTimeMillis();
+			final CountDownLatch cdl = new CountDownLatch(max);
+			
+			Semaphore spe = new Semaphore(5000);
+			
+			AtomicInteger yes = new AtomicInteger();
+			AtomicInteger no = new AtomicInteger();
+			String ip = "192.168.1.5:8082";
+			
+			RestTemplate restTemplate = new RestTemplate();
+			String url = "http://" + ip + "/singleList/ok";
+			
+
+			for (int index = 1 ; index <= max ; index ++) {
+				
+				final int i = index;
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						//JSONObject data = new JSONObject();
+						
+						try {
+							spe.acquire();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						User user = new User();
+			    		user.setId(UUID.randomUUID().toString());
+			    		user.setAge(i);
+			    		user.setName("jack" + i);
+			    		user.setPassword("password" + i);
+			    		
+			    		JSONObject data = JSONObject.parseObject(JSONObject.toJSONString(user));
+			    		
+			    		String resultStr = null;
+						try {
+							resultStr = restTemplate.postForObject(url, data, String.class);
+							yes.incrementAndGet();
+						} catch (Exception e) {
+							no.incrementAndGet();
+							System.out.println("hello:response:error:resultStr:" + resultStr);
+							System.out.println("hello:response:error:" + e.getMessage());
+						}
+						spe.release();
+						cdl.countDown();
+					}
+				}).start();
+				
+			}
+			try {
+				cdl.await(60 , TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			long end = System.currentTimeMillis();
+			System.out.println("it's done");
+			System.out.println("cost.mis:" + (end - start));
+			System.out.println("cost.sec:" + (end - start)/1000);
+			System.out.println("1yes:" + yes.intValue());
+			System.out.println("1no:" + no.intValue());
+		}
     
 }

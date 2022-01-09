@@ -17,7 +17,7 @@ import com.lvf.springboot.model.User;
 public class SingleToList extends Thread {
 
 	private BlockingQueue<User> queue = new LinkedBlockingQueue<User>();
-	private int maxSize = 3000;
+	private int maxSize = 2000;
 	private int count = 0;
 	private User[] array = null;
 	private long[] timeoutArray = {1, 10, 100, 1000, 1000 * 60, 1000 * 60 * 60};
