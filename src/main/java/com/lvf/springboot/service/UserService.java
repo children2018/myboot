@@ -142,8 +142,9 @@ public class UserService {
 	}
 
 	public void insertInfoWithFork() {
+		long start = System.currentTimeMillis();
 		List<User> userList = new ArrayList<User>();
-		for (int i = 1; i <= 100000; i++) {
+		for (int i = 1; i <= 1000000; i++) {
 			User user = new User();
 			user.setId(UUID.randomUUID().toString());
 			user.setAge(i);
@@ -152,10 +153,22 @@ public class UserService {
 			userList.add(user);
 		}
 
-		HandlerTask ht = new HandlerTask(userMapper, userList, 0, userList.size(), 1);
+		HandlerTask ht = new HandlerTask(userMapper, userList, 0, userList.size(), 5000);
 		ForkJoinPool fork = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 2);
 		fork.invoke(ht);
 		// fork.shutdown();
+		while (true) {
+			if (fork.getActiveThreadCount() == 0) {
+				try {
+					Thread.sleep(200);
+					break;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("cost:" + (end - start));
 	}
 
 	public void insertsListWithFork() {
@@ -175,6 +188,53 @@ public class UserService {
 		ForkJoinPool fork = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 2);
 		fork.invoke(ht);
 		// fork.shutdown();
+	}
+	
+	public void insertsListWithSemaphore() {
+		
+		long start = System.currentTimeMillis();
+		
+		Semaphore spe = new Semaphore(100);
+		int max = 100000;
+		
+		List<User> userList = new ArrayList<User>();
+		for (int i = 1; i <= max; i++) {
+			User user = new User();
+			user.setId(UUID.randomUUID().toString());
+			user.setAge(i);
+			user.setName("jack" + i);
+			user.setPassword("password" + i);
+			userList.add(user);
+			if (userList.size() % 3000 == 0 || i == max) {
+				final List<User> saveList = userList; 
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							spe.acquire();
+							userMapper.insertList(saveList);
+							spe.release();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}).start();
+				userList = new ArrayList<User>();
+			}
+		}
+		while (true) {
+			System.out.println("spe.getQueueLength():" + spe.getQueueLength());
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (spe.getQueueLength() == 0) {
+				long end = System.currentTimeMillis();
+				System.out.println("cost.sss:" + (end - start));
+				break;
+			}
+		}
+
 	}
 
 	/**

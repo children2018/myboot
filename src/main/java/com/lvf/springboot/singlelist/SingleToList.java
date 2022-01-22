@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class SingleToList extends Thread {
 	private User[] array = null;
 	private long[] timeoutArray = {1, 10, 100, 1000, 1000 * 60, 1000 * 60 * 60};
 	private int timeoutIndex = 0;
+	
+	Semaphore spe = new Semaphore(100);
 	
 	private StringBuffer sbr = new StringBuffer();
 	
@@ -105,7 +108,19 @@ public class SingleToList extends Thread {
 	public void save(List<User> list) {
 		System.out.println("list.size():" + list.size());
 		sbr.append("list.size():").append(list.size()).append("\n");
-		userMapper.insertList(list);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					spe.acquire();
+					userMapper.insertList(list);
+					spe.release();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 	
 	public void add(User val) {

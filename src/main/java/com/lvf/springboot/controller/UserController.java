@@ -183,6 +183,11 @@ public class UserController {
 		return null;
 	}
     
+	@RequestMapping("/insertsListWithSemaphore")
+	public void insertsListWithSemaphore() {
+		userService.insertsListWithSemaphore();
+	}
+	
     @RequestMapping("/testjedis100")
     @ResponseBody
     public List<User> testjedis100(String name) {

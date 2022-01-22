@@ -242,4 +242,9 @@ public class SimpleTest {
 		service.shutdown(); // 任务结束。停止线程池的全部线程
 	}
 	
+	@Test
+	public void testCountDownlatch213() {
+		userService.insertsListWithSemaphore();
+	}
+	
 }
