@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<script type="application/javascript">
+//D:\java\git\myboot\src\main\java\com\lvf\springboot\websocket\websockect.html
+  var websocket = null;
+  if ('WebSocket' in window) {
+    websocket = new WebSocket("ws://localhost:8082/websocket");
+  } else {
+    alert('该浏览器不支持websocket');
+  }
+ 
+  websocket.onopen = function (event) {
+    console.log('websocket建立连接');
+  }
+ 
+  websocket.onclose = function (event) {
+    console.log('websocket关闭连接');
+  }
+ 
+  websocket.onmessage = function (event) {
+    console.log('websocket收到消息' + event.data);
+  }
+ 
+  websocket.onerror = function (event) {
+    console.log('websocket通信发生错误');
+ 
+  }
+ 
+  window.onbeforeunload = function (event) {
+    websocket.close();
+  }
+ 
+  function sendmessage(message) {
+    websocket.send(message);
+	console.log('message:' + message);
+  }
+  
+</script>
+<div onclick="sendmessage('yaya1');">click me</div>
+</html>
