@@ -73,11 +73,12 @@ public class HelloController {
 	@ResponseBody
 	@GetMapping("/testTomcatNio")
 	public Kabc testTomcatNio(String sss) {
-		System.out.println("dd.param.sss:" + sss);
+		System.out.print("" + sss + ",");
+		/*System.out.println("dd.param.sss:" + sss);
 		System.out.println(sss + ".thread.activeCount:" + Thread.activeCount());
 		System.out.println(sss + ".thread.id:" + Thread.currentThread().getId());
 		System.out.println(sss + ".thread.name:" + Thread.currentThread().getName());
-		
+		*/
 		modifySba();
 		
 		try {
@@ -95,15 +96,20 @@ public class HelloController {
 	public Kabc testTomcatNioRest() {
 		RestTemplate restTemplate = new RestTemplate();
 		for (int i=1;i<=sba;i++) {
-			String url = "http://192.168.1.2:8080/hello/testTomcatNio?sss=" + i;
-			String resultStr = null;
-			JSONObject data = new JSONObject();
-			try {
-				resultStr = restTemplate.getForObject(url, String.class, data);
-			} catch (Exception e) {
-				System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
-				System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
-			}
+			final int j = i;
+			new Thread(new Runnable() {
+				public void run() {
+					String url = "http://192.168.1.2:8080/hello/testTomcatNio?sss=" + j;
+					String resultStr = null;
+					JSONObject data = new JSONObject();
+					try {
+						resultStr = restTemplate.getForObject(url, String.class, data);
+					} catch (Exception e) {
+						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
+						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
+					}
+				}
+			}).start();
 		}
 		return null;
 	}
