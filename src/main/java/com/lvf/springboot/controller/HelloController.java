@@ -52,6 +52,44 @@ public class HelloController {
 		kabc.setUrl("OK");
 		return kabc;
 	}
+	
+	int sba=10000;
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNio")
+	public Kabc testTomcatNio(String sss) {
+		System.out.println("dd.param.sss:" + sss);
+		System.out.println(sss + ".thread.activeCount:" + Thread.activeCount());
+		System.out.println(sss + ".thread.id:" + Thread.currentThread().getId());
+		System.out.println(sss + ".thread.name:" + Thread.currentThread().getName());
+		try {
+			Thread.sleep(1000 * 60 * 60);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Kabc kabc = new Kabc();
+		kabc.setUrl("OK");
+		return kabc;
+	}
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRest")
+	public Kabc testTomcatNioRest() {
+		RestTemplate restTemplate = new RestTemplate();
+		for (int i=1;i<=sba;i++) {
+			String url = "http://192.168.1.2:8082/hello/testTomcatNio?sss=" + i;
+			String resultStr = null;
+			JSONObject data = new JSONObject();
+			try {
+				resultStr = restTemplate.getForObject(url, String.class, data);
+			} catch (Exception e) {
+				System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
+				System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
+			}
+		}
+		return null;
+	}
+	
 	//http://192.168.1.4:8082/hello/test2
 	//nohup java -Xmx9216m -Xms9216m -jar myboot-0.0.1.jar &
 	@ResponseBody
