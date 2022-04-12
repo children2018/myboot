@@ -53,7 +53,7 @@ public class HelloController {
 		return kabc;
 	}
 	
-	int sba = 10000;
+	int sba = 100;
 	int countSba = 0;
 	long start;
 	long end;
@@ -73,7 +73,7 @@ public class HelloController {
 	@ResponseBody
 	@GetMapping("/testTomcatNio")
 	public Kabc testTomcatNio(String sss) {
-		System.out.print("" + sss + ",");
+		System.out.println("" + sss + "");
 		/*System.out.println("dd.param.sss:" + sss);
 		System.out.println(sss + ".thread.activeCount:" + Thread.activeCount());
 		System.out.println(sss + ".thread.id:" + Thread.currentThread().getId());
