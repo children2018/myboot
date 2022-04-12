@@ -53,7 +53,22 @@ public class HelloController {
 		return kabc;
 	}
 	
-	int sba=10000;
+	int sba = 10000;
+	int countSba = 0;
+	long start;
+	long end;
+	
+	private void modifySba() {
+		synchronized ("fdsfdsfdsfdsfdsfdsfdsfdsfdsfdsfds") {
+			countSba++;
+			if (countSba == 1) {
+				start = System.currentTimeMillis();
+			} else if (countSba == sba) {
+				end = System.currentTimeMillis();
+				System.out.println("cost :" + (end - start));
+			}
+		}
+	}
 	
 	@ResponseBody
 	@GetMapping("/testTomcatNio")
@@ -62,6 +77,9 @@ public class HelloController {
 		System.out.println(sss + ".thread.activeCount:" + Thread.activeCount());
 		System.out.println(sss + ".thread.id:" + Thread.currentThread().getId());
 		System.out.println(sss + ".thread.name:" + Thread.currentThread().getName());
+		
+		modifySba();
+		
 		try {
 			Thread.sleep(1000 * 60 * 60);
 		} catch (InterruptedException e) {
