@@ -95,7 +95,7 @@ public class HelloController {
 	public Kabc testTomcatNioRest() {
 		RestTemplate restTemplate = new RestTemplate();
 		for (int i=1;i<=sba;i++) {
-			String url = "http://192.168.1.2:8082/hello/testTomcatNio?sss=" + i;
+			String url = "http://192.168.1.2:8080/hello/testTomcatNio?sss=" + i;
 			String resultStr = null;
 			JSONObject data = new JSONObject();
 			try {
