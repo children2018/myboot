@@ -53,7 +53,7 @@ public class HelloController {
 		return kabc;
 	}
 	
-	int sba = 100;
+	int sba = 1000;
 	int countSba = 0;
 	long start;
 	long end;
