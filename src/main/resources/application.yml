@@ -14,21 +14,21 @@ jdbc:
   database:
     master:
       type: com.alibaba.druid.pool.DruidDataSource
-      url: jdbc:mysql://192.168.1.2:3306/test
+      url: jdbc:mysql://192.168.1.4:3306/test
       username: root
       password: 1234
       maxActive: 139
       driverClass: com.mysql.cj.jdbc.Driver
     slave1:
       type: com.alibaba.druid.pool.DruidDataSource
-      url: jdbc:mysql://192.168.1.2:3306/test
+      url: jdbc:mysql://192.168.1.4:3306/test
       username: root
       password: 1234
       maxActive: 139
       driverClass: com.mysql.cj.jdbc.Driver
     slave2:
       type: com.alibaba.druid.pool.DruidDataSource
-      url: jdbc:mysql://192.168.1.2:3306/test
+      url: jdbc:mysql://192.168.1.4:3306/test
       username: root
       password: 1234
       maxActive: 139
