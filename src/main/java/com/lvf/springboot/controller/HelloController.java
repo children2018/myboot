@@ -173,6 +173,7 @@ public class HelloController {
 	public Kabc testTomcatNioRest2() {
 		System.out.println("sout:" + sout);
 		RestTemplate restTemplate = new RestTemplate();
+		long start = System.currentTimeMillis();
 		CountDownLatch cdl = new CountDownLatch(sba);
 		for (int i = sout + 1; i <= sout + sba; i++) {
 			final int j = i;
@@ -197,6 +198,8 @@ public class HelloController {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		long end = System.currentTimeMillis();
+		System.out.println("sba:" + sba + "--- cost :" + (end - start));
 		sout = sout + sba;
 		Kabc kabc = new Kabc();
 		kabc.setUrl("testTomcatNioRest2.OK2");
