@@ -182,6 +182,7 @@ public class HelloController {
 					JSONObject data = new JSONObject();
 					try {
 						resultStr = restTemplate.getForObject(url, String.class, data);
+						System.out.println("sss=" + j + "---" + resultStr);
 					} catch (Exception e) {
 						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
 						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
