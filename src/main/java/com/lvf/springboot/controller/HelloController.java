@@ -166,12 +166,13 @@ public class HelloController {
 		kabc.setUrl("startTomcatNio2.OK2");
 		return kabc;
 	}
-	
+	int sout = 0;
 	@ResponseBody
 	@GetMapping("/testTomcatNioRest2")
 	public Kabc testTomcatNioRest2() {
 		RestTemplate restTemplate = new RestTemplate();
-		for (int i=1; i <= sba; i++) {
+		sout = sout + sba;
+		for (int i = sout + 1; i <= sout + sba; i++) {
 			final int j = i;
 			new Thread(new Runnable() {
 				public void run() {
