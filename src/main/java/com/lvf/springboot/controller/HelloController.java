@@ -95,6 +95,32 @@ public class HelloController {
 	}
 	
 	@ResponseBody
+	@GetMapping("/countTomcatNio")
+	public Kabc countTomcatNio(String sss) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					ThreadGroup currentGroup = 
+						      Thread.currentThread().getThreadGroup();
+					long current = System.currentTimeMillis();
+				    int noThreads = currentGroup.activeCount();
+					System.out.println("" + current +".Thread.activeCount:" + noThreads);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
+		
+		Kabc kabc = new Kabc();
+		kabc.setUrl("OK");
+		return kabc;
+	}
+	
+	@ResponseBody
 	@GetMapping("/startTomcatNio")
 	public Kabc startTomcatNio(String sss) {
 		int a = 1;
