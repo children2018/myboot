@@ -170,8 +170,8 @@ public class HelloController {
 	@ResponseBody
 	@GetMapping("/testTomcatNioRest2")
 	public Kabc testTomcatNioRest2() {
+		System.out.println("sout:" + sout);
 		RestTemplate restTemplate = new RestTemplate();
-		sout = sout + sba;
 		for (int i = sout + 1; i <= sout + sba; i++) {
 			final int j = i;
 			new Thread(new Runnable() {
@@ -188,6 +188,8 @@ public class HelloController {
 				}
 			}).start();
 		}
+		
+		sout = sout + sba;
 		Kabc kabc = new Kabc();
 		kabc.setUrl("testTomcatNioRest2.OK2");
 		return kabc;
