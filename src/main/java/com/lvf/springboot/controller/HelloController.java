@@ -133,6 +133,39 @@ public class HelloController {
 		return null;
 	}
 	
+	@ResponseBody
+	@GetMapping("/startTomcatNio2")
+	public Kabc startTomcatNio2(String sss) {
+		Kabc kabc = new Kabc();
+		kabc.setUrl("startTomcatNio2.OK2");
+		return kabc;
+	}
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRest2")
+	public Kabc testTomcatNioRest2() {
+		RestTemplate restTemplate = new RestTemplate();
+		for (int i=1; i <= sba; i++) {
+			final int j = i;
+			new Thread(new Runnable() {
+				public void run() {
+					String url = "http://192.168.1.2:8080/hello/startTomcatNio2?sss=" + j;
+					String resultStr = null;
+					JSONObject data = new JSONObject();
+					try {
+						resultStr = restTemplate.getForObject(url, String.class, data);
+					} catch (Exception e) {
+						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
+						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
+					}
+				}
+			}).start();
+		}
+		Kabc kabc = new Kabc();
+		kabc.setUrl("testTomcatNioRest2.OK2");
+		return kabc;
+	}
+	
 	//http://192.168.1.4:8082/hello/test2
 	//nohup java -Xmx9216m -Xms9216m -jar myboot-0.0.1.jar &
 	@ResponseBody
