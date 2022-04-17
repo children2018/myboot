@@ -53,7 +53,7 @@ public class HelloController {
 		return kabc;
 	}
 	
-	int sba = 5000;
+	int sba = 15000;
 	int countSba = 0;
 	long start;
 	long end;
@@ -173,6 +173,7 @@ public class HelloController {
 	public Kabc testTomcatNioRest2() {
 		System.out.println("sout:" + sout);
 		RestTemplate restTemplate = new RestTemplate();
+		CountDownLatch cdl = new CountDownLatch(sba);
 		for (int i = sout + 1; i <= sout + sba; i++) {
 			final int j = i;
 			new Thread(new Runnable() {
@@ -183,6 +184,7 @@ public class HelloController {
 					try {
 						resultStr = restTemplate.getForObject(url, String.class, data);
 						System.out.println("sss=" + j + "---" + resultStr);
+						cdl.countDown();
 					} catch (Exception e) {
 						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
 						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
@@ -190,7 +192,11 @@ public class HelloController {
 				}
 			}).start();
 		}
-		
+		try {
+			cdl.await(1000 * 20, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		sout = sout + sba;
 		Kabc kabc = new Kabc();
 		kabc.setUrl("testTomcatNioRest2.OK2");
