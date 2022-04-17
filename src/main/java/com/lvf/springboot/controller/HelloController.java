@@ -73,19 +73,37 @@ public class HelloController {
 	@ResponseBody
 	@GetMapping("/testTomcatNio")
 	public Kabc testTomcatNio(String sss) {
-		System.out.print("" + sss + "");
-		System.out.println("   " + sss + ".thread.activeCount:" + Thread.activeCount());
-		/*System.out.println("dd.param.sss:" + sss);
-		System.out.println(sss + ".thread.activeCount:" + Thread.activeCount());
-		System.out.println(sss + ".thread.id:" + Thread.currentThread().getId());
-		System.out.println(sss + ".thread.name:" + Thread.currentThread().getName());
-		*/
-		modifySba();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					long current = System.currentTimeMillis();
+					int count = Thread.activeCount();
+					System.out.println("" + current +".Thread.activeCount:" + count);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
 		
-		try {
-			Thread.sleep(1000 * 60 * 60);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		Kabc kabc = new Kabc();
+		kabc.setUrl("OK");
+		return kabc;
+	}
+	
+	@ResponseBody
+	@GetMapping("/startTomcatNio")
+	public Kabc startTomcatNio(String sss) {
+		int a = 1;
+		while (a == 1) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		Kabc kabc = new Kabc();
 		kabc.setUrl("OK");
@@ -96,11 +114,11 @@ public class HelloController {
 	@GetMapping("/testTomcatNioRest")
 	public Kabc testTomcatNioRest() {
 		RestTemplate restTemplate = new RestTemplate();
-		for (int i=1;i<=sba;i++) {
+		for (int i=1; i <= sba; i++) {
 			final int j = i;
 			new Thread(new Runnable() {
 				public void run() {
-					String url = "http://192.168.1.2:8080/hello/testTomcatNio?sss=" + j;
+					String url = "http://192.168.1.2:8080/hello/startTomcatNio?sss=" + j;
 					String resultStr = null;
 					JSONObject data = new JSONObject();
 					try {
