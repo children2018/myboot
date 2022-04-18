@@ -120,6 +120,26 @@ public class HelloController {
 		return kabc;
 	}
 	
+	static {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					ThreadGroup currentGroup = 
+						      Thread.currentThread().getThreadGroup();
+					long current = System.currentTimeMillis();
+				    int noThreads = currentGroup.activeCount();
+					System.out.println("" + current +".Thread.activeCount:" + noThreads);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
+	}
+	
 	@ResponseBody
 	@GetMapping("/startTomcatNio")
 	public Kabc startTomcatNio(String sss) {
