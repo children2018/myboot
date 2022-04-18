@@ -49,4 +49,11 @@ public class RedisController {
         return "true";
     }
     
+    @GetMapping("msg4")
+    public String getMsg4() {
+        String result = (String) redisTemplate.opsForValue().get("testtoday");
+        return result;
+    }   
+    
+    
 }
