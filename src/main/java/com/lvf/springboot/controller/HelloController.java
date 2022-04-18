@@ -213,6 +213,51 @@ public class HelloController {
 		return kabc;
 	}
 	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRest3")
+	public Kabc testTomcatNioRest3() {
+		System.out.println("sout:" + sout);
+		RestTemplate restTemplate = new RestTemplate();
+		long start = System.currentTimeMillis();
+		CountDownLatch cdl = new CountDownLatch(sba);
+		Thread[] thds = new Thread[sba];
+		int thdsInt = 0;
+		for (int i = sout + 1; i <= sout + sba; i++) {
+			final int j = i;
+			thds[thdsInt ++] = new Thread(new Runnable() {
+				public void run() {
+					String url = "http://192.168.1.4:8080/user/getUserInfo?sss=" + j;
+					String resultStr = null;
+					JSONObject data = new JSONObject();
+					try {
+						resultStr = restTemplate.getForObject(url, String.class, data);
+						System.out.println("sss=" + j + "---" + resultStr);
+						cdl.countDown();
+					} catch (Exception e) {
+						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
+						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
+					}
+				}
+			});
+		}
+		
+		for (Thread threadItem : thds) {
+			threadItem.start();
+		}
+		
+		try {
+			cdl.await(1000, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("sba:" + sba + "--- cdl.getCount:" + cdl.getCount() + "--- cost :" + (end - start));
+		sout = sout + sba;
+		Kabc kabc = new Kabc();
+		kabc.setUrl("testTomcatNioRest2.OK2");
+		return kabc;
+	}
+	
 	//http://192.168.1.4:8082/hello/test2
 	//nohup java -Xmx9216m -Xms9216m -jar myboot-0.0.1.jar &
 	@ResponseBody
