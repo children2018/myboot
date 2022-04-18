@@ -291,7 +291,7 @@ public class HelloController {
 			final int j = i;
 			thds[thdsInt ++] = new Thread(new Runnable() {
 				public void run() {
-					String url = "http://192.168.1.2:8080/redis/msg4?sss=" + j;
+					String url = "http://192.168.1.4:8080/redis/msg4?sss=" + j;
 					String resultStr = null;
 					JSONObject data = new JSONObject();
 					try {
