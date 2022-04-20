@@ -53,7 +53,7 @@ public class HelloController {
 		return kabc;
 	}
 	
-	int sba = 4000;
+	int sba = 7000;
 	int countSba = 0;
 	long start;
 	long end;
@@ -159,25 +159,41 @@ public class HelloController {
 	@ResponseBody
 	@GetMapping("/testTomcatNioRest")
 	public Kabc testTomcatNioRest() {
+		
+		long startd = System.currentTimeMillis();
 		RestTemplate restTemplate = new RestTemplate();
+		CountDownLatch cdl = new CountDownLatch(sba);
+		
 		for (int i=1; i <= sba; i++) {
 			final int j = i;
 			new Thread(new Runnable() {
 				public void run() {
-					String url = "http://192.168.1.2:8080/hello/startTomcatNio?sss=" + j;
+					String url = "http://192.168.1.2:2222/hello/startTomcatNio2?sss=" + j;
 					String resultStr = null;
 					JSONObject data = new JSONObject();
 					try {
 						resultStr = restTemplate.getForObject(url, String.class, data);
 						System.out.println("sss=" + j + "---" + resultStr);
+						cdl.countDown();
 					} catch (Exception e) {
 						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
 						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
+						cdl.countDown();
 					}
 				}
 			}).start();
 		}
-		return null;
+		
+		try {
+			cdl.await(1000, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long endd = System.currentTimeMillis();
+		System.out.println("sba:" + sba + "--- cost :" + (endd - startd));
+		Kabc kabc = new Kabc();
+		kabc.setUrl("testTomcatNioRest.OK");
+		return kabc;
 	}
 	
 	@ResponseBody
@@ -201,7 +217,7 @@ public class HelloController {
 			final int j = i;
 			thds[thdsInt ++] = new Thread(new Runnable() {
 				public void run() {
-					String url = "http://192.168.1.2:8080/hello/startTomcatNio2?sss=" + j;
+					String url = "http://192.168.1.2:2222/hello/startTomcatNio2?sss=" + j;
 					String resultStr = null;
 					JSONObject data = new JSONObject();
 					try {
@@ -292,6 +308,51 @@ public class HelloController {
 			thds[thdsInt ++] = new Thread(new Runnable() {
 				public void run() {
 					String url = "http://192.168.1.4:8080/redis/msg4?sss=" + j;
+					String resultStr = null;
+					JSONObject data = new JSONObject();
+					try {
+						resultStr = restTemplate.getForObject(url, String.class, data);
+						System.out.println("sss=" + j + "---" + resultStr);
+						cdl.countDown();
+					} catch (Exception e) {
+						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
+						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
+					}
+				}
+			});
+		}
+		
+		for (Thread threadItem : thds) {
+			threadItem.start();
+		}
+		
+		try {
+			cdl.await(1000, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("sba:" + sba + "--- cdl.getCount:" + cdl.getCount() + "--- cost :" + (end - start));
+		sout = sout + sba;
+		Kabc kabc = new Kabc();
+		kabc.setUrl("testTomcatNioRest2.OK2");
+		return kabc;
+	}
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRest5")
+	public Kabc testTomcatNioRest5() {
+		System.out.println("sout:" + sout);
+		RestTemplate restTemplate = new RestTemplate();
+		long start = System.currentTimeMillis();
+		CountDownLatch cdl = new CountDownLatch(sba);
+		Thread[] thds = new Thread[sba];
+		int thdsInt = 0;
+		for (int i = sout + 1; i <= sout + sba; i++) {
+			final int j = i;
+			thds[thdsInt ++] = new Thread(new Runnable() {
+				public void run() {
+					String url = "http://192.168.1.2:8080/jjj/11.html?sss=" + j;
 					String resultStr = null;
 					JSONObject data = new JSONObject();
 					try {
