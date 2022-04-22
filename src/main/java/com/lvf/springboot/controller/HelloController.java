@@ -205,7 +205,7 @@ public class HelloController {
 			e.printStackTrace();
 		}
 		long endd = System.currentTimeMillis();
-		System.out.println("sba:" + sba + "--- cost :" + (endd - startd));
+		System.out.println("count:" + count + "--- cost :" + (endd - startd));
 		Kabc kabc = new Kabc();
 		kabc.setUrl("testTomcatNioRest.OK");
 		return kabc;
