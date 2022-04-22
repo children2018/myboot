@@ -53,7 +53,7 @@ public class HelloController {
 		return kabc;
 	}
 	
-	int sba = 10000;
+	int sba = 5000;
 	int countSba = 0;
 	long start;
 	long end;
@@ -158,22 +158,26 @@ public class HelloController {
 	
 	@ResponseBody
 	@GetMapping("/testTomcatNioRest")
-	public Kabc testTomcatNioRest() {
-		return rest(true);
+	public Kabc testTomcatNioRest(Integer count) {
+		return rest(true, count);
 	}
 	
 	@ResponseBody
 	@GetMapping("/testTomcatNioRestMax")
-	public Kabc testTomcatNioRestMax() {
-		return rest(false);
+	public Kabc testTomcatNioRestMax(Integer count) {
+		return rest(false, count);
 	}
 	
-	public Kabc rest (boolean flag) {
+	public Kabc rest (boolean flag, Integer count) {
 		long startd = System.currentTimeMillis();
+
+		if (count == null) {
+			count = sba;
+		}
 		RestTemplate restTemplate = new RestTemplate();
-		CountDownLatch cdl = new CountDownLatch(sba);
+		CountDownLatch cdl = new CountDownLatch(count);
 		
-		for (int i=1; i <= sba; i++) {
+		for (int i=1; i <= count; i++) {
 			final int j = i;
 			new Thread(new Runnable() {
 				public void run() {
