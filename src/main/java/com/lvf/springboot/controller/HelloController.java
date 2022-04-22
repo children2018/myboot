@@ -53,7 +53,7 @@ public class HelloController {
 		return kabc;
 	}
 	
-	int sba = 7000;
+	int sba = 30000;
 	int countSba = 0;
 	long start;
 	long end;
@@ -200,7 +200,7 @@ public class HelloController {
 	@GetMapping("/startTomcatNio2")
 	public Kabc startTomcatNio2(String sss) {
 		Kabc kabc = new Kabc();
-		kabc.setUrl("startTomcatNio2.OK2");
+		kabc.setUrl("startTomcatNio2.OK2." + sss);
 		return kabc;
 	}
 	int sout = 0;
