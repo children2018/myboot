@@ -53,7 +53,7 @@ public class HelloController {
 		return kabc;
 	}
 	
-	int sba = 30000;
+	int sba = 10000;
 	int countSba = 0;
 	long start;
 	long end;
@@ -159,7 +159,16 @@ public class HelloController {
 	@ResponseBody
 	@GetMapping("/testTomcatNioRest")
 	public Kabc testTomcatNioRest() {
-		
+		return rest(true);
+	}
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRestMax")
+	public Kabc testTomcatNioRestMax() {
+		return rest(false);
+	}
+	
+	public Kabc rest (boolean flag) {
 		long startd = System.currentTimeMillis();
 		RestTemplate restTemplate = new RestTemplate();
 		CountDownLatch cdl = new CountDownLatch(sba);
@@ -172,7 +181,9 @@ public class HelloController {
 					String resultStr = null;
 					JSONObject data = new JSONObject();
 					try {
-						resultStr = restTemplate.getForObject(url, String.class, data);
+						if (flag) {
+							resultStr = restTemplate.getForObject(url, String.class, data);
+						}
 						System.out.println("sss=" + j + "---" + resultStr);
 						cdl.countDown();
 					} catch (Exception e) {
