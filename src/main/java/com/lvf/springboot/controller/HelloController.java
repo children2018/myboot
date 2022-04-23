@@ -1,5 +1,7 @@
 package com.lvf.springboot.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
@@ -154,6 +156,40 @@ public class HelloController {
 		Kabc kabc = new Kabc();
 		kabc.setUrl("OK");
 		return kabc;
+	}
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioAll")
+	public Kabc testTomcatNioAll(Integer count) {
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				RestTemplate restTemplate = new RestTemplate();
+				String url = "http://192.168.1.4:8080/hello/testTomcatNioRest";
+				if (count != null) {
+					url = url + "?count=" + count;
+				}
+				JSONObject data = new JSONObject();
+				restTemplate.getForObject(url, String.class, data);
+			}
+		}).start();
+		
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				RestTemplate restTemplate = new RestTemplate();
+				String url = "http://192.168.1.5:8080/hello/testTomcatNioRest";
+				if (count != null) {
+					url = url + "?count=" + count;
+				}
+				JSONObject data = new JSONObject();
+				restTemplate.getForObject(url, String.class, data);
+			}
+		}).start();
+		
+		return new Kabc();
 	}
 	
 	@ResponseBody
@@ -327,6 +363,60 @@ public class HelloController {
 					JSONObject data = new JSONObject();
 					try {
 						resultStr = restTemplate.getForObject(url, String.class, data);
+						System.out.println("sss=" + j + "---" + resultStr);
+						cdl.countDown();
+					} catch (Exception e) {
+						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
+						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
+					}
+				}
+			});
+		}
+		
+		for (Thread threadItem : thds) {
+			threadItem.start();
+		}
+		
+		try {
+			cdl.await(1000, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("sba:" + sba + "--- cdl.getCount:" + cdl.getCount() + "--- cost :" + (end - start));
+		sout = sout + sba;
+		Kabc kabc = new Kabc();
+		kabc.setUrl("testTomcatNioRest2.OK2");
+		return kabc;
+	}
+	
+	public Map<Integer, String> map = new HashMap<Integer, String>();
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRest6")
+	public Kabc testTomcatNioRest6() {
+		
+		if (map.size() < 10) {
+			for (int i = 10000000 ;i > 0 ; i--) {
+				map.put(i, "yaya" + (i+1));
+			}
+		}
+		
+		System.out.println("sout:" + sout);
+		RestTemplate restTemplate = new RestTemplate();
+		long start = System.currentTimeMillis();
+		CountDownLatch cdl = new CountDownLatch(20000);
+		Thread[] thds = new Thread[20000];
+		int thdsInt = 0;
+		for (int i = 1; i <= 20000; i++) {
+			final int j = i;
+			thds[thdsInt ++] = new Thread(new Runnable() {
+				public void run() {
+					String url = "http://192.168.1.2:8080/user/getUserInfo?sss=" + j;
+					String resultStr = null;
+					JSONObject data = new JSONObject();
+					try {
+						resultStr = map.get(j);
 						System.out.println("sss=" + j + "---" + resultStr);
 						cdl.countDown();
 					} catch (Exception e) {
