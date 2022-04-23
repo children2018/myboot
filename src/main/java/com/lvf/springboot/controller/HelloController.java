@@ -405,10 +405,10 @@ public class HelloController {
 		System.out.println("sout:" + sout);
 		RestTemplate restTemplate = new RestTemplate();
 		long start = System.currentTimeMillis();
-		CountDownLatch cdl = new CountDownLatch(20000);
-		Thread[] thds = new Thread[20000];
+		CountDownLatch cdl = new CountDownLatch(10000);
+		Thread[] thds = new Thread[10000];
 		int thdsInt = 0;
-		for (int i = 1; i <= 20000; i++) {
+		for (int i = 1; i <= 10000; i++) {
 			final int j = i;
 			thds[thdsInt ++] = new Thread(new Runnable() {
 				public void run() {
@@ -417,6 +417,70 @@ public class HelloController {
 					JSONObject data = new JSONObject();
 					try {
 						resultStr = map.get(j);
+						System.out.println("sss=" + j + "---" + resultStr);
+						cdl.countDown();
+					} catch (Exception e) {
+						System.out.println("testTomcatNioRest:response:error:resultStr:" + resultStr);
+						System.out.println("testTomcatNioRest:response:error:" + e.getMessage());
+					}
+				}
+			});
+		}
+		
+		for (Thread threadItem : thds) {
+			threadItem.start();
+		}
+		
+		try {
+			cdl.await(1000, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("sba:" + sba + "--- cdl.getCount:" + cdl.getCount() + "--- cost :" + (end - start));
+		sout = sout + sba;
+		Kabc kabc = new Kabc();
+		kabc.setUrl("testTomcatNioRest2.OK2");
+		return kabc;
+	}
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRest7initData")
+	public Kabc testTomcatNioRest7initData() {
+		
+		if (map.size() < 10) {
+			for (int i = 10000000 ;i > 0 ; i--) {
+				map.put(i, "yaya" + (i+1));
+			}
+		}
+		
+		return new Kabc();
+	}
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRest7")
+	public String testTomcatNioRest7(String sss) {
+		return map.get(Integer.valueOf(sss));
+	}
+	
+	@ResponseBody
+	@GetMapping("/testTomcatNioRest7Count")
+	public Kabc testTomcatNioRest7Count() {
+		System.out.println("sout:" + sout);
+		RestTemplate restTemplate = new RestTemplate();
+		long start = System.currentTimeMillis();
+		CountDownLatch cdl = new CountDownLatch(10000);
+		Thread[] thds = new Thread[10000];
+		int thdsInt = 0;
+		for (int i = 1; i <= 10000; i++) {
+			final int j = i;
+			thds[thdsInt ++] = new Thread(new Runnable() {
+				public void run() {
+					String url = "http://192.168.1.2:8080/hello/testTomcatNioRest7?sss=" + j;
+					String resultStr = null;
+					JSONObject data = new JSONObject();
+					try {
+						resultStr = restTemplate.getForObject(url, String.class, data);
 						System.out.println("sss=" + j + "---" + resultStr);
 						cdl.countDown();
 					} catch (Exception e) {
