@@ -28,8 +28,8 @@ public class MyWebSocketServer {
 	@OnOpen
 	public void onOpen(Session session) throws IOException {
 		this.session = session;
-		System.out.println("onOpen" + session.getId());
 		String idx = this.getIdx(session);
+		System.out.println("onOpen idx:" + idx);
 		if (idx == null) {
 			System.out.println("非法连接");
 		}
