@@ -34,10 +34,12 @@
   }
  
   function sendmessage(message) {
+	var msg = document.getElementById("inputMsg").value;
     websocket.send(message);
 	console.log('message:' + message);
   }
   
 </script>
-<div onclick="sendmessage('yaya2');">click me</div>
+<input type="text" id="inputMsg" />
+<div onclick="sendmessage();">click me</div>
 </html>
