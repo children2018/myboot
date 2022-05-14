@@ -1,6 +1,7 @@
 package com.lvf.springboot.websocket;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -83,7 +84,8 @@ public class MyWebSocketServer {
 	}
 	
 	public String getIdx(Session session) throws IOException {
-		for (String idx : session.getRequestParameterMap().get("idx")) {
+		List<String> list = session.getRequestParameterMap().get("idx");
+		for (String idx : list) {
 			return idx;
 		}
 		return null;
