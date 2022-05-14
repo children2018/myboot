@@ -32,6 +32,7 @@ public class MyWebSocketServer {
 		System.out.println("onOpen idx:" + idx);
 		if (idx == null) {
 			System.out.println("非法连接");
+			return ;
 		}
 		WebSocketMapUtil.put(idx, this);
 	}
