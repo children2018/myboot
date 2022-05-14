@@ -21,6 +21,7 @@
   }
  
   websocket.onmessage = function (event) {
+	document.getElementById("divText").innerHtml += (event.data + "<br/>" + document.getElementById("divText").innerHtml);
     console.log('websocket收到消息' + event.data);
   }
  
@@ -42,4 +43,7 @@
 </script>
 <input type="text" id="inputMsg" />
 <div onclick="sendmessage();">click me</div>
+<div id="divText" >
+
+</div>
 </html>
