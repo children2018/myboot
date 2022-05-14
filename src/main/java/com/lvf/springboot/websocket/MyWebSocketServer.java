@@ -23,22 +23,29 @@ public class MyWebSocketServer {
 
 	/**
 	 * 连接建立后触发的方法
+	 * @throws IOException 
 	 */
 	@OnOpen
-	public void onOpen(Session session) {
+	public void onOpen(Session session) throws IOException {
 		this.session = session;
 		System.out.println("onOpen" + session.getId());
-		WebSocketMapUtil.put(session.getId(), this);
+		String idx = this.getIdx(session);
+		if (idx == null) {
+			System.out.println("非法连接");
+		}
+		WebSocketMapUtil.put(idx, this);
 	}
 
 	/**
 	 * 连接关闭后触发的方法
+	 * @throws IOException 
 	 */
 	@OnClose
-	public void onClose() {
+	public void onClose() throws IOException {
+		String idx = this.getIdx(session);
 		// 从map中删除
-		WebSocketMapUtil.remove(session.getId());
-		System.out.println("====== onClose:" + session.getId() + " ======");
+		WebSocketMapUtil.remove(idx);
+		System.out.println("====== onClose:" + idx + " ======");
 	}
 
 	/**
@@ -46,20 +53,23 @@ public class MyWebSocketServer {
 	 */
 	@OnMessage
 	public void onMessage(String params, Session session) throws Exception {
+		String idx = this.getIdx(session);
 		// 获取服务端到客户端的通道
-		MyWebSocketServer myWebSocket = WebSocketMapUtil.get(session.getId());
-		System.out.println("收到来自" + session.getId() + "的消息" + params);
-		String result = "收到来自" + session.getId() + "的消息" + params;
+		MyWebSocketServer myWebSocket = WebSocketMapUtil.get(idx);
+		System.out.println("收到来自" + idx + "的消息" + params);
+		String result = "收到来自" + idx + "的消息" + params;
 		// 返回消息给Web Socket客户端（浏览器）
 		myWebSocket.sendMessage(1, "成功！", result);
 	}
 
 	/**
 	 * 发生错误时触发的方法
+	 * @throws IOException 
 	 */
 	@OnError
-	public void onError(Session session, Throwable error) {
-		System.out.println(session.getId() + "连接发生错误" + error.getMessage());
+	public void onError(Session session, Throwable error) throws IOException {
+		String idx = this.getIdx(session);
+		System.out.println(idx + "连接发生错误" + error.getMessage());
 		error.printStackTrace();
 	}
 
@@ -69,6 +79,13 @@ public class MyWebSocketServer {
 		result.put("message", message);
 		result.put("datas", datas);
 		this.session.getBasicRemote().sendText(result.toString());
+	}
+	
+	public String getIdx(Session session) throws IOException {
+		for (String idx : session.getRequestParameterMap().get("idx")) {
+			return idx;
+		}
+		return null;
 	}
 
 }
