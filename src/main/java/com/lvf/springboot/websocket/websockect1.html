@@ -34,14 +34,22 @@
     websocket.close();
   }
  
-  function sendmessage(message) {
-	var msg = document.getElementById("inputMsg").value;
+  function sendmessage() {
+	var message = document.getElementById("inputMsg").value;
     websocket.send(message);
 	console.log('message:' + message);
   }
   
 </script>
+<div>
 <input type="text" id="inputMsg" />
+</div>
+-<br/>
+-<br/>
+-<br/>
+-<br/>
+-<br/>
+-<br/>
 <div onclick="sendmessage();">click me</div>
 <div id="divText" >
 
