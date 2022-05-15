@@ -11,11 +11,8 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSONObject;
-import com.lvf.springboot.activemq.TrueSender;
 
 @Component
 @ServerEndpoint(value = "/websocket")
@@ -24,9 +21,6 @@ public class MyWebSocketServer {
 	private Logger logger = Logger.getLogger(MyWebSocketServer.class);
 	private Session session;
 	
-	@Autowired
-	private TrueSender trueSender;
-
 	/**
 	 * 连接建立后触发的方法
 	 * @throws IOException 
@@ -67,7 +61,6 @@ public class MyWebSocketServer {
 		String result = "收到来自" + idx + "的消息" + params;
 		
 		//推送给activemq
-		trueSender.sendMessage(params);
 		
 		// 返回消息给Web Socket客户端（浏览器）
 		myWebSocket.sendMessage(1, "成功！", result);
