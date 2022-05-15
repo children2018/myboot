@@ -19,11 +19,45 @@
 
 	<dependencies>
 	
-		<dependency>
-	        <groupId>org.apache.activemq</groupId>
-	        <artifactId>activemq-all</artifactId>
-	        <version>5.16.5</version>
-        </dependency>
+		  <dependency>
+		      <groupId>org.apache.activemq</groupId>
+		      <artifactId>activemq-spring</artifactId>
+		      <version>5.16.5</version>
+		  </dependency>
+		  <dependency>
+		      <groupId>org.apache.activemq</groupId>
+		      <artifactId>activemq-kahadb-store</artifactId>
+		      <version>5.16.5</version>
+		  </dependency>
+		  
+		  <dependency> 
+		      <groupId>org.apache.activemq</groupId>
+		      <artifactId>activemq-broker</artifactId>
+		      <version>5.16.5</version>
+		  </dependency>
+		
+		  <dependency>
+		      <groupId>org.apache.activemq</groupId>
+		      <artifactId>activemq-client</artifactId>
+		      <version>5.16.5</version>
+		  </dependency>
+		  <dependency>
+		      <groupId>org.fusesource.hawtbuf</groupId>
+		      <artifactId>hawtbuf</artifactId>
+		      <version>1.11</version>
+		  </dependency>
+		
+		  <dependency>
+		      <groupId>org.apache.geronimo.specs</groupId>
+		      <artifactId>geronimo-jms_1.1_spec</artifactId>
+		      <version>1.1.1</version>
+		  </dependency>
+		  <dependency>
+		      <groupId>org.apache.geronimo.specs</groupId>
+		      <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
+		      <version>1.0.1</version>
+		  </dependency>
+		  
     
 		<!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
 		<dependency>
