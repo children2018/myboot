@@ -21,7 +21,7 @@
   }
  
   websocket.onmessage = function (event) {
-	document.getElementById("divText").innerHtml += (event.data + "<br/>" + document.getElementById("divText").innerHtml);
+	document.getElementById("divText").innerHTML = (event.data + "<br/>" + document.getElementById("divText").innerHTML);
     console.log('websocket收到消息' + event.data);
   }
  

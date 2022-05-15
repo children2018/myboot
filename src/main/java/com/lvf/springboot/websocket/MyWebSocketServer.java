@@ -14,7 +14,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONObject;
+import com.lvf.aop.SpringContextHolder;
 import com.lvf.springboot.activemq.MqProducer;
+import com.lvf.springboot.utils.ApplicationContextUtil;
 
 @Component
 @ServerEndpoint(value = "/websocket")
@@ -22,9 +24,6 @@ public class MyWebSocketServer {
 
 	private Logger logger = Logger.getLogger(MyWebSocketServer.class);
 	private Session session;
-	
-	@Autowired
-	private MqProducer mqProducer;
 	
 	/**
 	 * 连接建立后触发的方法
@@ -66,10 +65,13 @@ public class MyWebSocketServer {
 		String result = "收到来自" + idx + "的消息" + params;
 		
 		//推送给activemq
+		MqProducer mqProducer = ApplicationContextUtil.getBean(MqProducer.class);
+		System.out.println("onMessage.mqProducer:" + mqProducer);
 		mqProducer.send(params);
 		
 		// 返回消息给Web Socket客户端（浏览器）
-		myWebSocket.sendMessage(1, "成功！", result);
+		//这一条暂时注释掉，因为多个线程操作数据发送接口会出现异常
+		//myWebSocket.sendMessage(1, "成功！", result);
 	}
 
 	/**
