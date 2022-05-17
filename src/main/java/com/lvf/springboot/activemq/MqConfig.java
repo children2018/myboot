@@ -13,5 +13,10 @@ public class MqConfig {
 	public Topic topic () {
 		return new ActiveMQTopic("sms.test.topic");
 	}
+	
+	@Bean
+	public Topic topic2 () {
+		return new ActiveMQTopic("sms.test.topic2");
+	}
 
 }

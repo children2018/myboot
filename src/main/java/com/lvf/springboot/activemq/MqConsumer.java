@@ -27,5 +27,10 @@ public class MqConsumer {
 			}
 		}
 	}
+	
+	@JmsListener(destination="sms.test.topic2")
+	public void receive2(TextMessage msg) throws JMSException {
+		System.out.println("消费者接收2：" + msg.getText());
+	}
 
 }
