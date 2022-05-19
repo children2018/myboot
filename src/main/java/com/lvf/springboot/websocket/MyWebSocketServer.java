@@ -67,7 +67,7 @@ public class MyWebSocketServer {
 		//推送给activemq
 		MqProducer mqProducer = ApplicationContextUtil.getBean(MqProducer.class);
 		System.out.println("onMessage.mqProducer:" + mqProducer);
-		mqProducer.send(params);
+//		mqProducer.send(params);
 		
 		// 返回消息给Web Socket客户端（浏览器）
 		//这一条暂时注释掉，因为多个线程操作数据发送接口会出现异常

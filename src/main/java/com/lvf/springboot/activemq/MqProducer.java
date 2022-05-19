@@ -9,16 +9,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class MqProducer {
 	
-	@Autowired
+	/*@Autowired
 	private JmsMessagingTemplate jmsMessagingTemplate;
 	
 	@Autowired
 	private Topic topic;
 	
 	@Autowired
-	private Topic topic2;
+	private Topic topic2;*/
 	
-	public void send(String msg) {
+	/*public void send(String msg) {
 		System.out.println("生产者发送：" + msg);
 		jmsMessagingTemplate.convertAndSend(this.topic, msg);
 	}
@@ -26,7 +26,7 @@ public class MqProducer {
 	public void send2(String msg) {
 		System.out.println("生产者发送2：" + msg);
 		jmsMessagingTemplate.convertAndSend(this.topic2, msg);
-	}
+	}*/
 
 
 }

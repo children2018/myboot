@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MqConfig {
 	
-	@Bean
+	/*@Bean
 	public Topic topic () {
 		return new ActiveMQTopic("sms.test.topic");
 	}
@@ -17,6 +17,6 @@ public class MqConfig {
 	@Bean
 	public Topic topic2 () {
 		return new ActiveMQTopic("sms.test.topic2");
-	}
+	}*/
 
 }
