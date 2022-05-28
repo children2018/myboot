@@ -95,9 +95,12 @@ public class ProducerController {
 		new Thread(new Runnable() {
 			public void run() {
 				while (true) {
-					for (int j = 0;j < 10000; j++) {
+					long startTime = System.currentTimeMillis();
+					for (int j = 0;j < 9999; j++) {
 						sessionList.get(j).getAsyncRemote().sendText("msg&*#&$*#*$testWebsocketCluster:" + UUID.randomUUID().toString());
 					}
+					long endTime = System.currentTimeMillis();
+					System.out.println("cost time:" + (endTime - startTime));
 					try {
 						Thread.sleep(1000 * 6);
 					} catch (InterruptedException e) {
