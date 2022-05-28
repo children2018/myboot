@@ -72,7 +72,7 @@ public class ProducerController {
 		
 		System.out.println("cd testWebsocketCluster");
 		
-		for (int i = 0;i < 1000; i++) {
+		for (int i = 0;i < 10000; i++) {
 			String str = "ws://192.168.1.2:8083/websocket?idx=sparta" + i;
 			
 			URI path = URI.create(str);
@@ -95,7 +95,7 @@ public class ProducerController {
 		new Thread(new Runnable() {
 			public void run() {
 				while (true) {
-					for (int j = 0;j < 1000; j++) {
+					for (int j = 0;j < 10000; j++) {
 						sessionList.get(j).getAsyncRemote().sendText("msg&*#&$*#*$testWebsocketCluster:" + UUID.randomUUID().toString());
 					}
 					try {
