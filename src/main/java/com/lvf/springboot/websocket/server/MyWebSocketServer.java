@@ -1,4 +1,4 @@
-package com.lvf.springboot.websocket;
+package com.lvf.springboot.websocket.server;
 
 import java.io.IOException;
 import java.util.List;

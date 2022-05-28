@@ -1,4 +1,4 @@
-package com.lvf.springboot.websocket;
+package com.lvf.springboot.websocket.server;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;

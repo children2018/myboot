@@ -1,4 +1,4 @@
-package com.lvf.springboot.websocket;
+package com.lvf.springboot.websocket.server;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

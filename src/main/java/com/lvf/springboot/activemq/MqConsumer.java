@@ -8,8 +8,8 @@ import javax.jms.TextMessage;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
-import com.lvf.springboot.websocket.MyWebSocketServer;
-import com.lvf.springboot.websocket.WebSocketMapUtil;
+import com.lvf.springboot.websocket.server.MyWebSocketServer;
+import com.lvf.springboot.websocket.server.WebSocketMapUtil;
 
 @Component
 public class MqConsumer {
