@@ -476,7 +476,7 @@ public class HelloController {
 			final int j = i;
 			thds[thdsInt ++] = new Thread(new Runnable() {
 				public void run() {
-					String url = "http://192.168.1.2:8080/hello/testTomcatNioRest7?sss=" + j;
+					String url = "http://192.168.1.2:8083/hello/testTomcatNioRest7?sss=" + j;
 					String resultStr = null;
 					JSONObject data = new JSONObject();
 					try {
@@ -851,7 +851,7 @@ public class HelloController {
 			
 			AtomicInteger yes = new AtomicInteger();
 			AtomicInteger no = new AtomicInteger();
-			String ip = "192.168.1.5:8082";
+			String ip = "192.168.1.2:8083";
 			
 			RestTemplate restTemplate = new RestTemplate();
 			String url = "http://" + ip + "/singleList/ok";
