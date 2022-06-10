@@ -35,7 +35,7 @@ public class QueueConsumersIp {
 	
 	public static void main(String[] args) {
 		try {
-			List<String> list = getQueueConsumers("admin", "admin", "192.168.1.2:61618", "sms.up.queue");
+			List<String> list = getQueueConsumers("yaya", "yaya002", "192.168.1.2:61618", "sms.up.queue");
 			for (String str : list) {
 				System.out.println("str:" + str);
 			}
@@ -68,6 +68,8 @@ public class QueueConsumersIp {
 				true);
 
 		for (ObjectName mbeanNameConsumerObjectName : queueViewMBean.getSubscriptions()) {
+			
+			System.out.println("mbeanNameConsumerObjectName:" + mbeanNameConsumerObjectName);
 
 			SubscriptionViewMBean subscriptionViewMBean = MBeanServerInvocationHandler.newProxyInstance(conn,
 					mbeanNameConsumerObjectName, SubscriptionViewMBean.class, true);
