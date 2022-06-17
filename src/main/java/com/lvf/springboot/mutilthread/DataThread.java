@@ -3,8 +3,6 @@ package com.lvf.springboot.mutilthread;
 import java.util.List;
 import java.util.UUID;
 
-import com.alibaba.fastjson.JSON;
-
 public class DataThread<T> extends Thread {
 	
 	private Data<T> data = null;
@@ -27,11 +25,11 @@ public class DataThread<T> extends Thread {
 			}
 			
 			System.out.println(System.currentTimeMillis() + " uuid:" + uuid + " list.size:" + list.size());
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			/*for (T t : list) {
 			}*/
 		}
