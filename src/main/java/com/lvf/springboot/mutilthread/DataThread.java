@@ -14,7 +14,7 @@ public class DataThread<T> extends Thread {
 	public DataThread(Data<T> data, DataService<T> dataService) {
 		this.data = data;
 		this.dataService = dataService;
-		System.out.println(uuid + " created.");
+		System.out.println(System.currentTimeMillis() + " uuid:" + uuid + " created.");
 	}
 	
 	@Override
@@ -26,11 +26,16 @@ public class DataThread<T> extends Thread {
 				break;
 			}
 			
-			for (T t : list) {
-				System.out.println(uuid + " list.size:" + list.size());
+			System.out.println(System.currentTimeMillis() + " uuid:" + uuid + " list.size:" + list.size());
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
+			/*for (T t : list) {
+			}*/
 		}
-		System.out.println(uuid + " done");
+		System.out.println(System.currentTimeMillis() + " uuid:" + uuid + " done");
 		this.dataService.doneNum(uuid);
 	}
 

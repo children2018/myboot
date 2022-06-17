@@ -36,14 +36,14 @@ public class DataService<T> extends Thread {
 	@Override
 	public void run() {
 		lock.lock();
-		System.out.println("run获得了资源");
+		System.out.println(System.currentTimeMillis() + " run获得了资源");
 		try {
 			if (!isRun(0)) {
-				System.out.println("我睡着了。。。");
+				System.out.println(System.currentTimeMillis() + " run我睡着了。。。");
 				condition2.await();
-				System.out.println("我醒了。。。");
+				System.out.println(System.currentTimeMillis() + " run我醒了。。。");
 			} else {
-				System.out.println("我没睡 不用叫醒我。。。");
+				System.out.println(System.currentTimeMillis() + " run我没睡 不用叫醒我。。。");
 			}
 			this.process();
 		} catch (Exception e) {
@@ -54,26 +54,26 @@ public class DataService<T> extends Thread {
 	
 	public void doneNum(String uuid) {
 		lock2.lock();
-		System.out.println(uuid + "获得了资源");
+		System.out.println(System.currentTimeMillis() + " uuid:" + uuid + "获得了资源");
 		if (++doneNum >= threadNum){
 			lock.lock();
-			System.out.println("game over...");
+			System.out.println(System.currentTimeMillis() + "game over...doneNum:" + doneNum);
 			condition.signal();
 			lock.unlock();
 		} 
-		System.out.println(uuid + "释放了资源");
+		System.out.println(System.currentTimeMillis() + " uuid:" + uuid + "释放了资源");
 		lock2.unlock();
 	}
 	
 	public void waitThis() {
 		lock.lock();
-		System.out.println("waitThis获得了资源");
+		System.out.println(System.currentTimeMillis() + " waitThis获得了资源");
 		try {
 			if (isRun(1)) {
-				System.out.println("我叫醒它。。。");
+				System.out.println(System.currentTimeMillis() + " waitThis我叫醒它。。。");
 				condition2.signal();
 			}
-			System.out.println("我等待。。。");
+			System.out.println(System.currentTimeMillis() + " waitThis我等待。。。");
 			condition.await();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,7 +91,7 @@ public class DataService<T> extends Thread {
 	
 	public static void main(String[] args) {
 		List<String> list = new ArrayList<String>();
-		for ( int i = 0 ;i < 10000; i ++) {
+		for ( int i = 0 ;i < 30; i ++) {
 			list.add("" + new Random().nextInt());
 		}
 		/*list.add("1");
@@ -107,15 +107,15 @@ public class DataService<T> extends Thread {
 		list.add("36");
 		list.add("30");*/
 		
-		DataService<String> ds = new DataService<String>(3666, 26, list);
+		DataService<String> ds = new DataService<String>(1, 26, list);
 		ds.start();
-//		try {
-//			Thread.sleep(1000 * 1);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			Thread.sleep(1000 * 1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		ds.waitThis();
-		System.out.println("end............");
+		System.out.println(System.currentTimeMillis() + "end............");
 	}
 
 }
