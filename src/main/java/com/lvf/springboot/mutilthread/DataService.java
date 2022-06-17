@@ -107,7 +107,7 @@ public class DataService<T> extends Thread {
 		list.add("36");
 		list.add("30");*/
 		
-		DataService<String> ds = new DataService<String>(200, 26, list);
+		DataService<String> ds = new DataService<String>(3666, 26, list);
 		ds.start();
 //		try {
 //			Thread.sleep(1000 * 1);
