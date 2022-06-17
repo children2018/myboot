@@ -26,9 +26,9 @@ public class DataThread<T> extends Thread {
 				break;
 			}
 			
-			for (T t : list) {
-				System.out.println(uuid + " list.size:" + list.size());
-			}
+			System.out.println(uuid + " list.size:" + list.size());
+			/*for (T t : list) {
+			}*/
 		}
 		System.out.println(uuid + " done");
 		this.dataService.doneNum(uuid);
