@@ -9,10 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.lvf.springboot.callable.Kabc;
 import com.lvf.springboot.mapper.UserMapper;
@@ -20,19 +17,17 @@ import com.lvf.springboot.model.User;
 import com.lvf.springboot.opentsdb.OpentsdbTest;
 import com.lvf.springboot.service.UserService;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class SimpleTest {
 	
 	@Autowired
 	private UserService userService;
 	@Autowired
 	private UserMapper userMapper;
-	@Autowired
-	private Kabc kabc;
+	private Kabc kabc = new Kabc();
 	
 	@Test
 	public void test() {
+		kabc.setUrl("com.test.aaa");
 		System.out.println("kabc:" + kabc.getUrl());
 		System.out.println("current....");
 	}
