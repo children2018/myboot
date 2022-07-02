@@ -2,8 +2,10 @@ package com.lvf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,6 +53,38 @@ public class SimpleTest {
 		for (int a : aList) {
 			User user = list.get(a);
 			System.out.println(String.format("a=%s,user=%s", a, JSONObject.toJSONString(user)));
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("it's done:" + (end - start));
+
+	}
+	
+	
+	@Test
+	public void test2() {
+		
+		Queue<User> queue = new ArrayBlockingQueue<User>(1000000);
+
+		List<User> list = new ArrayList<User>();
+
+		for (int i = 1; i <= 15000000; i++) {
+			User user = new User();
+			user.setId(UUID.randomUUID().toString());
+			user.setAge(i);
+			list.add(user);
+		}
+		
+		
+		List<Integer> aList = new ArrayList<Integer>();
+		for (int i = 1; i <= 100000; i++) {
+			int a = Math.abs(new Random().nextInt(10000));
+			aList.add(a);
+		}
+		
+		long start = System.currentTimeMillis();
+		for (int a : aList) {
+			User user = list.get(a);
+			//queue.add(user);
 		}
 		long end = System.currentTimeMillis();
 		System.out.println("it's done:" + (end - start));
