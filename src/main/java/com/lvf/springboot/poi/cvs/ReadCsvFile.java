@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -14,6 +15,26 @@ import org.springframework.core.io.Resource;
 public class ReadCsvFile {
 	
 	public static void main(String[] args) {
+		List<CSVRecord> list = new ReadCsvFile().handler();
+		for (CSVRecord rec : list) {
+			System.out.print(rec.get("BOUND01"));
+			System.out.print("\t\t|");
+			System.out.print(rec.get("BOUND02"));
+			System.out.print("\t\t|");
+			System.out.print(rec.get("BOUND03"));
+			System.out.print("\t\t|");
+			System.out.print(rec.get("BOUND04"));
+			System.out.print("\t\t|");
+			System.out.print(rec.get("BOUND05"));
+			System.out.print("\t\t|");
+			System.out.print(rec.get("BOUND06"));
+			System.out.print("\t\t|");
+			System.out.print(rec.get("BOUND07"));
+			System.out.println("\t\t|");
+		}
+	}
+	
+	public List<CSVRecord> handler() {
 		InputStreamReader in = null;
 		Reader read = null;
 		List<CSVRecord> list = null;
@@ -29,6 +50,7 @@ public class ReadCsvFile {
 		} finally {
 			if (in != null) {
 				try {
+					System.out.println("close in..");
 					in.close();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -36,6 +58,7 @@ public class ReadCsvFile {
 			}
 			if (read != null) {
 				try {
+					System.out.println("close read..");
 					read.close();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -43,24 +66,6 @@ public class ReadCsvFile {
 			}
 		}
 		
-		if (list != null) {
-			for (CSVRecord rec : list) {
-				System.out.print(rec.get("BOUND01"));
-				System.out.print("\t\t|");
-				System.out.print(rec.get("BOUND02"));
-				System.out.print("\t\t|");
-				System.out.print(rec.get("BOUND03"));
-				System.out.print("\t\t|");
-				System.out.print(rec.get("BOUND04"));
-				System.out.print("\t\t|");
-				System.out.print(rec.get("BOUND05"));
-				System.out.print("\t\t|");
-				System.out.print(rec.get("BOUND06"));
-				System.out.print("\t\t|");
-				System.out.print(rec.get("BOUND07"));
-				System.out.println("\t\t|");
-			}
-		}
-		
+		return list == null ? new ArrayList<CSVRecord>(): list ;
 	}
 }
