@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
@@ -18,10 +19,8 @@ import org.springframework.util.ResourceUtils;
  *
  */
 public class CvsParser {
-	public static void main(String[] args) {
-		new CvsParser().handler();
-	}
 
+	@Test
 	public void handler() {
 		try {
 			Resource resource = new ClassPathResource("file/abc.csv");
