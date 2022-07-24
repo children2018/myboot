@@ -115,6 +115,9 @@ public class CvsParser {
 			in.write(sbf.toString());
 			for (int i = 1; i <= row; i++) {
 				sbf = new StringBuffer();
+				if (i == 47000000) {
+					sbf.append("<[[-lfs-]]>");
+				}
 				for (int j = 1; j <= col; j++) {
 					int n = 10;
 					int m = 2;
@@ -256,6 +259,73 @@ public class CvsParser {
 				System.out.println("cost3:" + (end - start));
 			}).start();
 			
+			Thread.sleep(1000 * 10000);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 1）5000条数据，对所有数据行进行扫描，用时0.986秒
+	 * init data...end
+	 * find i:47000000
+	 * find str:<[[-lfs-]]>is如t,情元感,in情号的现容smr,n英现,号情rt,单存im容的m,在符
+	 * find cost4:986
+	 * 
+	 * 2）5000条数据，直接定位，用时0秒。
+	 * init data...end
+	 * find i:47000000
+     * find str:<[[-lfs-]]>is如t,情元感,in情号的现容smr,n英现,号情rt,单存im容的m,在符
+     * find cost4:0
+	 */
+	@Test
+	public void readCsvFileThreadOne() {
+		int length = 50000000;
+		String[] list = new String[length];
+		try {
+
+			File f = new File("C:\\Users\\Administrator\\Desktop\\test.csv");
+			System.out.println("f.length():" + f.length());
+			InputStreamReader in = new InputStreamReader(new FileInputStream(f), "gbk");
+			BufferedReader read = new BufferedReader(in);
+			String line = new String();
+			int a = 0;
+			while ((line = read.readLine()) != null) {
+				System.out.println("a:" + a);
+				list[a++] = line;
+				if (a >= length) {
+					break;
+				}
+			}
+			read.close();
+			in.close();
+			
+			System.out.println("init data...end");
+			
+			new Thread(() -> {
+				long start = System.currentTimeMillis();
+				for (int i = 47000000; i < list.length ; i++) {
+					
+					if (!s) {
+						long end = System.currentTimeMillis();
+						System.out.println("cost4:" + (end - start));
+						return;
+					}
+					
+					if (list[i].indexOf("<[[-lfs-]]>") != -1) {
+						s = false;
+						long end = System.currentTimeMillis();
+						System.out.println("find i:" + i);
+						System.out.println("find str:" + list[i]);
+						System.out.println("find cost4:" + (end - start));
+						return;
+					}
+				}
+				long end = System.currentTimeMillis();
+				System.out.println("cost4:" + (end - start));
+			}).start();
+
 			Thread.sleep(1000 * 10000);
 			
 		} catch (Exception e) {
