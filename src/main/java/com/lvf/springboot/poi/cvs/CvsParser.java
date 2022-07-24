@@ -96,11 +96,12 @@ public class CvsParser {
 	 * 500万条记录373 MB，只能用notepad++打开
 	 * 1000万条记录747 MB，只能用notepad++打开，生成文件用时29秒
 	 * 3000万条记录2.18 GB，notepad++弹框显示文件太大打不开哈哈，生成文件用时87秒，CPU使用率15%，其它硬件运行指标正常
+	 * 1亿条记录7.29 GB，notepad++弹框显示文件太大打不开哈哈，生成文件用时288秒，CPU使用率15%，其它硬件运行指标正常
 	 */
 	@Test
 	public void createCsvFile() {
 		
-		int row = 10000000;
+		int row = 100000000;
 		int col = 7;
 		try {
 			String content = "administrator如果单元格内容存在敏感字符的情况下出现英文逗号整个单元";
@@ -145,10 +146,12 @@ public class CvsParser {
 	 * 1000万条记录, 用LIST存储在内存当中，单线程顺序查找特定字符用时0.157秒
 	 * 1000万条记录, 用LIST存储在内存当中，多线程查找特定字符用时0.025秒：其中一个线程用时25毫秒，其它几个均为85毫秒，
 	 * 还要考虑一个线程成功应及时令其它线程立即停止搜索，共同标识boolean s 只是一个初步的解决方案。
+	 * 5000万条记录, 用数组存储在内存当中，多线程查找特定字符用时0.325秒：内存16GB使用率100%，CPU间隔性使用100%，其它硬件运行指标正常。
 	 */
 	@Test
 	public void readCsvFile() {
-		List<String> list = new ArrayList<String>();
+		int length = 50000000;
+		String[] list = new String[length];
 		try {
 
 			File f = new File("C:\\Users\\Administrator\\Desktop\\test.csv");
@@ -158,14 +161,20 @@ public class CvsParser {
 			String line = new String();
 			int a = 0;
 			while ((line = read.readLine()) != null) {
-				list.add(line);
+				System.out.println("a:" + a);
+				list[a++] = line;
+				if (a >= length) {
+					break;
+				}
 			}
 			read.close();
 			in.close();
 			
+			System.out.println("init data...end");
+			
 			new Thread(() -> {
 				long start = System.currentTimeMillis();
-				for (int i = list.size() / 4 * 3; i < list.size() ; i++) {
+				for (int i = list.length / 4 * 3; i < list.length ; i++) {
 					
 					if (!s) {
 						long end = System.currentTimeMillis();
@@ -173,7 +182,7 @@ public class CvsParser {
 						return;
 					}
 					
-					if (list.get(i).indexOf("<[[-lfs-]]>") != -1) {
+					if (list[i].indexOf("<[[-lfs-]]>") != -1) {
 						s = false;
 						long end = System.currentTimeMillis();
 						System.out.println("cost4:" + (end - start));
@@ -186,7 +195,7 @@ public class CvsParser {
 
 			new Thread(() -> {
 				long start = System.currentTimeMillis();
-				for (int i = list.size() / 4 * 0; i < list.size() / 4 * 1; i++) {
+				for (int i = list.length / 4 * 0; i < list.length / 4 * 1; i++) {
 					
 					if (!s) {
 						long end = System.currentTimeMillis();
@@ -194,7 +203,7 @@ public class CvsParser {
 						return;
 					}
 					
-					if (list.get(i).indexOf("<[[-lfs-]]>") != -1) {
+					if (list[i].indexOf("<[[-lfs-]]>") != -1) {
 						s = false;
 						long end = System.currentTimeMillis();
 						System.out.println("cost1:" + (end - start));
@@ -207,7 +216,7 @@ public class CvsParser {
 			
 			new Thread(() -> {
 				long start = System.currentTimeMillis();
-				for (int i = list.size() / 4 * 1; i < list.size() / 4 * 2; i++) {
+				for (int i = list.length / 4 * 1; i < list.length / 4 * 2; i++) {
 					
 					if (!s) {
 						long end = System.currentTimeMillis();
@@ -215,7 +224,7 @@ public class CvsParser {
 						return;
 					}
 					
-					if (list.get(i).indexOf("<[[-lfs-]]>") != -1) {
+					if (list[i].indexOf("<[[-lfs-]]>") != -1) {
 						s = false;
 						long end = System.currentTimeMillis();
 						System.out.println("cost2:" + (end - start));
@@ -228,7 +237,7 @@ public class CvsParser {
 
 			new Thread(() -> {
 				long start = System.currentTimeMillis();
-				for (int i = list.size() / 4 * 2; i < list.size() / 4 * 3; i++) {
+				for (int i = list.length / 4 * 2; i < list.length / 4 * 3; i++) {
 					
 					if (!s) {
 						long end = System.currentTimeMillis();
@@ -236,7 +245,7 @@ public class CvsParser {
 						return;
 					}
 					
-					if (list.get(i).indexOf("<[[-lfs-]]>") != -1) {
+					if (list[i].indexOf("<[[-lfs-]]>") != -1) {
 						s = false;
 						long end = System.currentTimeMillis();
 						System.out.println("cost3:" + (end - start));
@@ -247,7 +256,7 @@ public class CvsParser {
 				System.out.println("cost3:" + (end - start));
 			}).start();
 			
-			Thread.sleep(1000 * 100);
+			Thread.sleep(1000 * 10000);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
