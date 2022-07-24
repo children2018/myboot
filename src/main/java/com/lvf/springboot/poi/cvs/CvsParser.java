@@ -97,11 +97,12 @@ public class CvsParser {
 	 * 1000万条记录747 MB，只能用notepad++打开，生成文件用时29秒
 	 * 3000万条记录2.18 GB，notepad++弹框显示文件太大打不开哈哈，生成文件用时87秒，CPU使用率15%，其它硬件运行指标正常
 	 * 1亿条记录7.29 GB，notepad++弹框显示文件太大打不开哈哈，生成文件用时288秒，CPU使用率15%，其它硬件运行指标正常
+	 * 2亿条记录14.5 GB，notepad++弹框显示文件太大打不开哈哈，生成文件用时576秒，CPU使用率30%，其它硬件运行指标正常
 	 */
 	@Test
 	public void createCsvFile() {
 		
-		int row = 100000000;
+		int row = 200000000;
 		int col = 7;
 		try {
 			String content = "administrator如果单元格内容存在敏感字符的情况下出现英文逗号整个单元";
